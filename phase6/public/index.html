@@ -899,10 +899,16 @@ Click search button", https://example.com, Results shown</pre>
 
                         <div id="integrationFormFields"></div>
 
-                        <button class="btn-primary" style="width: 100%; margin-top: 16px;" onclick="saveIntegration()">
-                            💾 Save Integration
-                        </button>
+                        <div style="display: flex; gap: 12px; margin-top: 16px;">
+                            <button class="btn-secondary" style="flex: 1;" onclick="testConnection()">
+                                🧪 Test Connection
+                            </button>
+                            <button class="btn-primary" style="flex: 1;" onclick="saveIntegration()">
+                                💾 Save Integration
+                            </button>
+                        </div>
 
+                        <div id="integrationTestResult" style="margin-top: 16px;"></div>
                         <div id="integrationResult" style="margin-top: 20px;"></div>
                     </div>
                 </div>
@@ -2909,6 +2915,66 @@ Click search button", https://example.com, Results shown</pre>
             };
 
             formDiv.innerHTML = forms[provider] || '<p>Select a provider above</p>';
+        }
+
+        // Test Connection (before saving)
+        async function testConnection() {
+            const provider = document.getElementById('cloudProvider').value;
+            const testResultDiv = document.getElementById('integrationTestResult');
+            
+            if (!provider) {
+                testResultDiv.innerHTML = '<div class="alert alert-error">❌ Please select a provider</div>';
+                return;
+            }
+
+            // Gather form data
+            const config = {};
+            const inputs = document.querySelectorAll('#integrationFormFields input');
+            
+            if (inputs.length === 0) {
+                testResultDiv.innerHTML = '<div class="alert alert-error">❌ Please fill in the form fields first</div>';
+                return;
+            }
+
+            inputs.forEach(input => {
+                const key = input.id.replace('int_', '');
+                config[key] = input.value;
+            });
+
+            testResultDiv.innerHTML = '<div class="alert alert-info">⏳ Testing connection...</div>';
+
+            try {
+                const response = await fetch(`/api/integrations/${provider}/test`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    testResultDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            ✅ Connection successful!<br>
+                            <strong>Status:</strong> ${data.message || 'Connected successfully'}
+                        </div>
+                    `;
+                } else {
+                    testResultDiv.innerHTML = `
+                        <div class="alert alert-error">
+                            ❌ Connection failed<br>
+                            <strong>Error:</strong> ${data.error || 'Unable to connect'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                testResultDiv.innerHTML = `
+                    <div class="alert alert-error">
+                        ❌ Connection test failed<br>
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
         }
 
         // Save Integration
