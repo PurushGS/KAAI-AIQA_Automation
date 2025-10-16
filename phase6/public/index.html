@@ -1,0 +1,3119 @@
+<!DOCTYPE html>
+<!--
+╔════════════════════════════════════════════════════════════════╗
+║                  DO NOT MODIFY - AUTHOR INFORMATION            ║
+╠════════════════════════════════════════════════════════════════╣
+║  Author: Purushothama Raju                                     ║
+║  Date: 12/10/2025                                              ║
+║  Copyright © 2025 Purushothama Raju. All rights reserved.     ║
+╚════════════════════════════════════════════════════════════════╝
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Purushothama Raju">
+    <meta name="copyright" content="Copyright © 2025 Purushothama Raju">
+    <meta name="created" content="12/10/2025">
+    <title>AIQA - AI-Powered Test Automation Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5568d3;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --border: #e5e7eb;
+            --text: #374151;
+            --text-light: #6b7280;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-text h1 {
+            font-size: 28px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-text p {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: var(--light);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.healthy { background: var(--success); }
+        .status-dot.degraded { background: var(--warning); }
+        .status-dot.unhealthy { background: var(--danger); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: var(--light);
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        /* Content Area */
+        .content-area {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            min-height: 600px;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Section Header */
+        .section-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .section-header p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 24px;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Test Steps */
+        .test-steps {
+            margin-top: 24px;
+        }
+
+        .step-item {
+            background: var(--light);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
+        .step-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .step-actions button {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* Test Results */
+        .test-result {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .result-status {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .result-status.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .result-status.failure {
+            background: var(--danger);
+            color: white;
+        }
+
+        .screenshot {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 8px;
+            margin-top: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid var(--success);
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid var(--danger);
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-left: 4px solid var(--warning);
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+
+        /* Service Health */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .service-card {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--border);
+        }
+
+        .service-card.healthy {
+            border-left-color: var(--success);
+        }
+
+        .service-card.unhealthy {
+            border-left-color: var(--danger);
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .service-name {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .service-status {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .service-status.healthy {
+            background: var(--success);
+            color: white;
+        }
+
+        .service-status.unhealthy {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+
+        /* Options Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .option-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">🤖</div>
+                <div class="logo-text">
+                    <h1>AIQA Platform</h1>
+                    <p>AI-Powered Test Automation</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="status-badge">
+                    <span class="status-dot healthy" id="systemStatus"></span>
+                    <span id="systemStatusText">All Systems Operational</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar Navigation -->
+            <div class="sidebar">
+                <nav>
+                    <div class="nav-item active" onclick="showSection('dashboard')">
+                        <span class="nav-icon">📊</span>
+                        <span>Dashboard</span>
+                    </div>
+                    <div class="nav-item" onclick="showSection('create-test')">
+                        <span class="nav-icon">✨</span>
+                        <span>Create Test</span>
+                    </div>
+                    <div class="nav-item" onclick="showSection('execute')">
+                        <span class="nav-icon">▶️</span>
+                        <span>Execute Tests</span>
+                    </div>
+                    <div class="nav-item" onclick="showSection('results')">
+                        <span class="nav-icon">📈</span>
+                        <span>Test Results</span>
+                    </div>
+                    <div class="nav-item" onclick="showSection('test-suites')">
+                        <span class="nav-icon">📁</span>
+                        <span>Test Suites</span>
+                    </div>
+                    <div class="nav-item" onclick="showSection('knowledge')">
+                        <span class="nav-icon">🧠</span>
+                        <span>Knowledge Base</span>
+                    </div>
+                    <div class="nav-item" onclick="showSection('services')">
+                        <span class="nav-icon">⚙️</span>
+                        <span>Services</span>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="content-section active">
+                    <div class="section-header">
+                        <h2>📊 Platform Dashboard</h2>
+                        <p>Overview of your AI-powered testing platform</p>
+                    </div>
+
+                    <div class="stats-grid" id="statsGrid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalTests">-</div>
+                            <div class="stat-label">Total Tests</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="successRate">-</div>
+                            <div class="stat-label">Success Rate</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="avgDuration">-</div>
+                            <div class="stat-label">Avg Duration</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="uniqueUrls">-</div>
+                            <div class="stat-label">Unique URLs</div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <h2>🚀 Quick Start</h2>
+                        <p>What would you like to do?</p>
+                    </div>
+
+                    <div class="options-grid">
+                        <button class="btn btn-primary" onclick="showSection('create-test')">
+                            ✨ Create New Test
+                        </button>
+                        <button class="btn btn-secondary" onclick="showSection('execute')">
+                            ▶️ Execute Tests
+                        </button>
+                        <button class="btn btn-secondary" onclick="showSection('knowledge')">
+                            🧠 Query Knowledge
+                        </button>
+                        <button class="btn btn-secondary" onclick="refreshDashboard()">
+                            🔄 Refresh Stats
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Create Test Section -->
+                <div id="create-test" class="content-section">
+                    <div class="section-header">
+                        <h2>✨ Create Test in Natural Language</h2>
+                        <p>Describe your test scenario in plain English</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Test Description</label>
+                        <textarea 
+                            class="form-textarea" 
+                            id="nlInput" 
+                            placeholder="Example: Navigate to https://example.com and verify the heading is visible"
+                        ></textarea>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="convertToSteps()">
+                        <span class="spinner" id="convertSpinner" style="display:none;"></span>
+                        🔮 Convert to Test Steps
+                    </button>
+
+                    <div id="testStepsContainer" style="margin-top: 24px; display: none;">
+                        <div class="section-header">
+                            <h2>Generated Test Steps</h2>
+                            <p>Review and edit as needed</p>
+                        </div>
+                        <div class="test-steps" id="testStepsList"></div>
+                        
+                        <div style="margin-top: 20px; display: flex; gap: 12px;">
+                            <button class="btn btn-success" onclick="executeFromCreate()">
+                                ▶️ Execute Now
+                            </button>
+                            <button class="btn btn-secondary" onclick="saveTest()">
+                                💾 Save Test
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Execute Tests Section -->
+                <div id="execute" class="content-section">
+                    <div class="section-header">
+                        <h2>▶️ Execute Tests</h2>
+                        <p>Run your automated tests</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Test Steps (JSON)</label>
+                        <textarea 
+                            class="form-textarea" 
+                            id="executeSteps" 
+                            placeholder='[{"description": "Navigate to example.com", "action": "navigate", "target": "https://example.com"}]'
+                            style="min-height: 200px; font-family: monospace;"
+                        ></textarea>
+                    </div>
+
+                    <div class="options-grid">
+                        <div class="option-item">
+                            <input type="checkbox" id="headlessMode" checked>
+                            <label for="headlessMode">Headless Mode</label>
+                        </div>
+                        <div class="option-item">
+                            <input type="checkbox" id="continueOnFailure" checked>
+                            <label for="continueOnFailure">Continue on Failure</label>
+                        </div>
+                        <div class="option-item">
+                            <input type="checkbox" id="autoFix">
+                            <label for="autoFix">Auto-Fix Failures</label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="executeTest()">
+                        <span class="spinner" id="executeSpinner" style="display:none;"></span>
+                        ▶️ Execute Test
+                    </button>
+
+                    <div id="executionResults" style="margin-top: 24px;"></div>
+                </div>
+
+                <!-- Test Results Section -->
+                <div id="results" class="content-section">
+                    <div class="section-header">
+                        <h2>📈 Test Results</h2>
+                        <p>View execution history and screenshots</p>
+                    </div>
+
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📊</div>
+                            <p>No test results yet. Execute a test to see results here.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Suites Section -->
+                <div id="test-suites" class="content-section">
+                    <div class="section-header">
+                        <h2>📁 Test Suites</h2>
+                        <p>Organize and manage your test collections</p>
+                    </div>
+
+                    <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+                        <button class="btn btn-primary" onclick="showCreateSuiteModal()">
+                            ➕ New Suite
+                        </button>
+                        <button class="btn btn-secondary" onclick="showImportModal()">
+                            📥 Import
+                        </button>
+                        <input type="text" 
+                               id="suiteSearch" 
+                               placeholder="🔍 Search suites..." 
+                               class="form-input"
+                               onkeyup="searchSuites()"
+                               style="flex: 1; max-width: 400px;">
+                        <select id="tagFilter" class="form-input" onchange="filterByTag()" style="max-width: 200px;">
+                            <option value="">All Tags</option>
+                            <option value="smoke">🔥 Smoke</option>
+                            <option value="regression">🔄 Regression</option>
+                            <option value="critical">⚠️ Critical</option>
+                        </select>
+                    </div>
+
+                    <div id="suitesContainer">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📁</div>
+                            <p>No test suites yet. Create one to get started!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Knowledge Base Section -->
+                <div id="knowledge" class="content-section">
+                    <div class="section-header">
+                        <h2>🧠 Knowledge Base</h2>
+                        <p>Query the RAG system for insights</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Ask a Question</label>
+                        <textarea 
+                            class="form-textarea" 
+                            id="ragQuery" 
+                            placeholder="Example: Show me all tests that failed on login pages"
+                        ></textarea>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="queryKnowledge()">
+                        <span class="spinner" id="querySpinner" style="display:none;"></span>
+                        🔍 Search Knowledge Base
+                    </button>
+
+                    <div id="knowledgeResults" style="margin-top: 24px;"></div>
+                </div>
+
+                <!-- Services Section -->
+                <div id="services" class="content-section">
+                    <div class="section-header">
+                        <h2>⚙️ Services Health</h2>
+                        <p>Monitor all AIQA services</p>
+                    </div>
+
+                    <div class="services-grid" id="servicesGrid">
+                        <!-- Services will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentSteps = [];
+        let lastExecutionResult = null;
+
+        // Show section
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.closest('.nav-item').classList.add('active');
+
+            // Load data for specific sections
+            if (sectionId === 'dashboard') {
+                refreshDashboard();
+            } else if (sectionId === 'services') {
+                loadServices();
+            } else if (sectionId === 'results') {
+                loadTestResults();
+            }
+        }
+
+        // Refresh dashboard
+        async function refreshDashboard() {
+            try {
+                // Fetch test results to calculate dashboard stats
+                const response = await fetch('/api/phase2/tests');
+                const data = await response.json();
+                
+                if (data.success && data.tests) {
+                    const tests = data.tests;
+                    
+                    // Calculate stats from actual test data
+                    const totalTests = tests.length;
+                    const successfulTests = tests.filter(t => t.passed === t.totalSteps).length;
+                    const successRate = totalTests > 0 ? (successfulTests / totalTests * 100) : 0;
+                    const avgDuration = totalTests > 0 
+                        ? tests.reduce((sum, t) => sum + (t.duration || 0), 0) / totalTests 
+                        : 0;
+                    const uniqueUrls = new Set(tests.map(t => t.url || 'N/A')).size;
+                    
+                    // Update dashboard display
+                    document.getElementById('totalTests').textContent = totalTests;
+                    document.getElementById('successRate').textContent = `${Math.round(successRate)}%`;
+                    document.getElementById('avgDuration').textContent = `${Math.round(avgDuration)}ms`;
+                    document.getElementById('uniqueUrls').textContent = uniqueUrls;
+                } else {
+                    // No tests yet - show zeros
+                    document.getElementById('totalTests').textContent = '0';
+                    document.getElementById('successRate').textContent = '0%';
+                    document.getElementById('avgDuration').textContent = '0ms';
+                    document.getElementById('uniqueUrls').textContent = '0';
+                }
+            } catch (error) {
+                console.error('Error refreshing dashboard:', error);
+                // Show error state
+                document.getElementById('totalTests').textContent = 'Error';
+                document.getElementById('successRate').textContent = 'Error';
+                document.getElementById('avgDuration').textContent = 'Error';
+                document.getElementById('uniqueUrls').textContent = 'Error';
+            }
+
+            // Also check system health
+            checkSystemHealth();
+        }
+
+        // Check system health
+        async function checkSystemHealth() {
+            try {
+                const response = await fetch('/api/services/health');
+                const data = await response.json();
+                
+                const statusDot = document.getElementById('systemStatus');
+                const statusText = document.getElementById('systemStatusText');
+                const services = data.services || {};
+                
+                // Count healthy vs unhealthy services
+                const healthyCount = Object.values(services).filter(s => s.healthy).length;
+                const totalCount = Object.keys(services).length;
+                const allHealthy = healthyCount === totalCount;
+                const mostHealthy = healthyCount >= totalCount * 0.7; // 70% threshold
+                
+                if (allHealthy) {
+                    statusDot.className = 'status-dot healthy';
+                    statusText.textContent = 'All Systems Operational';
+                } else if (mostHealthy) {
+                    statusDot.className = 'status-dot degraded';
+                    statusText.textContent = `${healthyCount}/${totalCount} Services Running`;
+                } else {
+                    statusDot.className = 'status-dot unhealthy';
+                    statusText.textContent = 'System Degraded';
+                }
+            } catch (error) {
+                const statusDot = document.getElementById('systemStatus');
+                const statusText = document.getElementById('systemStatusText');
+                statusDot.className = 'status-dot unhealthy';
+                statusText.textContent = 'System Check Failed';
+            }
+        }
+
+        // Convert NL to steps
+        async function convertToSteps() {
+            const nlInput = document.getElementById('nlInput').value.trim();
+            if (!nlInput) {
+                alert('Please enter a test description');
+                return;
+            }
+
+            const spinner = document.getElementById('convertSpinner');
+            spinner.style.display = 'inline-block';
+
+            try {
+                const response = await fetch('/api/phase1/convert', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ naturalLanguage: nlInput })
+                });
+
+                const data = await response.json();
+                
+                if (data.success && data.steps) {
+                    currentSteps = data.steps;
+                    displaySteps(data.steps);
+                    document.getElementById('testStepsContainer').style.display = 'block';
+                } else {
+                    // If Phase 1 fails, create basic steps from the input
+                    currentSteps = [{
+                        description: nlInput,
+                        action: 'navigate',
+                        target: extractUrlFromText(nlInput) || 'https://example.com'
+                    }];
+                    displaySteps(currentSteps);
+                    document.getElementById('testStepsContainer').style.display = 'block';
+                    
+                    showAlert('info', 'Created basic test steps. Phase 1 service may be unavailable.');
+                }
+            } catch (error) {
+                console.error('Error converting NL:', error);
+                showAlert('error', 'Failed to convert test. Please check the format.');
+            } finally {
+                spinner.style.display = 'none';
+            }
+        }
+
+        // Extract URL from text
+        function extractUrlFromText(text) {
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            const matches = text.match(urlRegex);
+            return matches ? matches[0] : null;
+        }
+
+        // Display steps
+        function displaySteps(steps) {
+            const container = document.getElementById('testStepsList');
+            container.innerHTML = steps.map((step, index) => `
+                <div class="step-item">
+                    <div class="step-content">
+                        <span class="step-number">${index + 1}</span>
+                        <strong>${step.description}</strong>
+                        <div style="margin-top: 8px; font-size: 12px; color: var(--text-light);">
+                            Action: ${step.action} | Target: ${step.target}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Execute from create section
+        async function executeFromCreate() {
+            if (currentSteps.length === 0) {
+                alert('No test steps to execute');
+                return;
+            }
+
+            // Switch to execute section and populate
+            document.getElementById('executeSteps').value = JSON.stringify(currentSteps, null, 2);
+            showSection('execute');
+            
+            // Auto-execute
+            setTimeout(() => executeTest(), 500);
+        }
+
+        // Execute test
+        async function executeTest() {
+            const stepsText = document.getElementById('executeSteps').value.trim();
+            if (!stepsText) {
+                alert('Please enter test steps');
+                return;
+            }
+
+            let steps;
+            try {
+                steps = JSON.parse(stepsText);
+            } catch (error) {
+                alert('Invalid JSON format for test steps');
+                return;
+            }
+
+            const spinner = document.getElementById('executeSpinner');
+            spinner.style.display = 'inline-block';
+
+            const options = {
+                headless: document.getElementById('headlessMode').checked,
+                continueOnFailure: document.getElementById('continueOnFailure').checked
+            };
+
+            try {
+                const response = await fetch('/api/phase2/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ steps, options })
+                });
+
+                const data = await response.json();
+                lastExecutionResult = data;
+                
+                displayExecutionResult(data);
+                
+                if (data.success) {
+                    const report = data.report || {};
+                    const allPassed = report.passedSteps === report.totalSteps;
+                    
+                    if (allPassed) {
+                        showAlert('success', `✅ All tests passed! ${report.passedSteps}/${report.totalSteps} steps successful`);
+                    } else {
+                        showAlert('warning', `⚠️ Test completed with failures: ${report.passedSteps}/${report.totalSteps} passed, ${report.failedSteps} failed`);
+                    }
+                    
+                    // Store in RAG
+                    storeInRAG(data, steps);
+                } else {
+                    showAlert('error', '❌ Test execution failed. Check results below.');
+                }
+            } catch (error) {
+                console.error('Error executing test:', error);
+                showAlert('error', 'Failed to execute test. Please check the service.');
+            } finally {
+                spinner.style.display = 'none';
+            }
+        }
+
+        // Display execution result
+        function displayExecutionResult(data) {
+            const container = document.getElementById('executionResults');
+            const report = data.report || {};
+            const success = data.success && report.passedSteps === report.totalSteps;
+            
+            container.innerHTML = `
+                <div class="alert ${success ? 'alert-success' : 'alert-error'}">
+                    ${success ? '✅' : '⚠️'} Test completed: ${report.passedSteps || 0}/${report.totalSteps || 0} steps passed
+                    ${report.failedSteps > 0 ? `(${report.failedSteps} failed)` : ''}
+                </div>
+                
+                <div class="test-result">
+                    <div class="result-header">
+                        <strong>Test ID: ${data.testId || 'N/A'}</strong>
+                        <span class="result-status ${success ? 'success' : 'failure'}">
+                            ${report.passedSteps}/${report.totalSteps} PASSED
+                        </span>
+                    </div>
+                    <p><strong>Duration:</strong> ${report.duration || 0}ms</p>
+                    <p><strong>Steps Executed:</strong> ${report.totalSteps || 0}</p>
+                    <p><strong>Passed:</strong> <span style="color: var(--success)">${report.passedSteps || 0}</span></p>
+                    <p><strong>Failed:</strong> <span style="color: var(--danger)">${report.failedSteps || 0}</span></p>
+                    
+                    <div style="margin-top: 16px; display: flex; gap: 12px;">
+                        <button class="btn btn-secondary" onclick="loadTestReport('${data.testId}')">
+                            📊 View Detailed Results
+                        </button>
+                        <button class="btn btn-secondary" onclick="showSection('results')">
+                            📋 Go to Results Tab
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Store in RAG
+        async function storeInRAG(testResult, steps) {
+            try {
+                // Extract report data from the test result
+                const report = testResult.report || {};
+                
+                // Prepare data in the format RAG expects
+                const ragData = {
+                    testId: testResult.testId || `test_${Date.now()}`,
+                    testName: `Test: ${steps[0]?.description || 'Automated Test'}`,
+                    url: steps[0]?.target || 'N/A',
+                    steps: steps,
+                    results: {
+                        passed: report.passedSteps || 0,
+                        failed: report.failedSteps || 0,
+                        total: report.totalSteps || steps.length,
+                        duration: report.duration || 0
+                    },
+                    metadata: {
+                        timestamp: new Date().toISOString(),
+                        browser: 'chromium',
+                        testType: 'ui-automation'
+                    }
+                };
+                
+                console.log('📥 Storing test in RAG:', ragData.testId);
+                
+                const response = await fetch('/api/phase4.5/rag/store', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(ragData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log('✅ Test stored in RAG successfully');
+                } else {
+                    console.error('❌ Failed to store in RAG:', data.error);
+                }
+            } catch (error) {
+                console.error('❌ Error storing in RAG:', error);
+            }
+        }
+
+        // Query knowledge base
+        async function queryKnowledge() {
+            const query = document.getElementById('ragQuery').value.trim();
+            if (!query) {
+                alert('Please enter a question');
+                return;
+            }
+
+            const spinner = document.getElementById('querySpinner');
+            spinner.style.display = 'inline-block';
+
+            try {
+                const response = await fetch('/api/phase4.5/rag/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, limit: 5 })
+                });
+
+                const data = await response.json();
+                displayKnowledgeResults(data);
+            } catch (error) {
+                console.error('Error querying knowledge:', error);
+                showAlert('error', 'Failed to query knowledge base.');
+            } finally {
+                spinner.style.display = 'none';
+            }
+        }
+
+        // Display knowledge results
+        function displayKnowledgeResults(data) {
+            const container = document.getElementById('knowledgeResults');
+            
+            if (data.success && data.results && data.results.length > 0) {
+                container.innerHTML = `
+                    <div class="alert alert-success">
+                        Found ${data.resultsCount || 0} relevant results
+                    </div>
+                    
+                    ${data.answer ? `
+                        <div class="test-result">
+                            <h3>AI Answer:</h3>
+                            <p>${data.answer}</p>
+                        </div>
+                    ` : ''}
+                    
+                    <h3 style="margin-top: 24px;">Similar Tests:</h3>
+                    ${data.results.map(result => {
+                        const metadata = result.metadata || {};
+                        return `
+                            <div class="test-result">
+                                <div class="result-header">
+                                    <strong>${metadata.testName || 'Test'}</strong>
+                                    <span class="result-status ${metadata.success ? 'success' : 'failure'}">
+                                        ${metadata.success ? 'PASSED' : 'FAILED'}
+                                    </span>
+                                </div>
+                                <p><strong>URL:</strong> ${metadata.url || 'N/A'}</p>
+                                <p><strong>Timestamp:</strong> ${metadata.timestamp || 'N/A'}</p>
+                            </div>
+                        `;
+                    }).join('')}
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="alert alert-info">
+                        No results found. Try a different query.
+                    </div>
+                `;
+            }
+        }
+
+        // Load services
+        async function loadServices() {
+            try {
+                const response = await fetch('/api/services/health');
+                const data = await response.json();
+                
+                const container = document.getElementById('servicesGrid');
+                const services = data.services || {};
+                
+                container.innerHTML = Object.keys(services).map(key => {
+                    const service = services[key];
+                    const healthy = service.healthy || service.status === 'healthy';
+                    const statusText = service.status === 'running' ? 'Running' : 
+                                      healthy ? 'Healthy' : 'Offline';
+                    const statusClass = healthy ? 'healthy' : 'unhealthy';
+                    
+                    return `
+                        <div class="service-card ${statusClass}">
+                            <div class="service-header">
+                                <div class="service-name">${formatServiceName(key)}</div>
+                                <div class="service-status ${statusClass}">
+                                    ${statusText}
+                                </div>
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-light); margin-top: 8px;">
+                                URL: ${service.url || 'N/A'}
+                            </div>
+                            ${service.note ? `
+                                <div style="font-size: 11px; color: var(--text-light); margin-top: 4px; font-style: italic;">
+                                    ℹ️ ${service.note}
+                                </div>
+                            ` : ''}
+                            ${service.hasHealthEndpoint === false && service.healthy ? `
+                                <div style="font-size: 11px; color: var(--warning); margin-top: 4px;">
+                                    ⚡ No health endpoint
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading services:', error);
+            }
+        }
+
+        // Format service name
+        function formatServiceName(key) {
+            const names = {
+                'phase1': 'Phase 1: NL to Test Steps',
+                'phase2': 'Phase 2: Test Execution',
+                'phase3': 'Phase 3: AI Web Reader',
+                'phase4': 'Phase 4: Learning System',
+                'phase4_5': 'Phase 4.5: RAG Service',
+                'phase5': 'Phase 5: Self-Improving Code'
+            };
+            return names[key] || key;
+        }
+
+        // Show alert
+        function showAlert(type, message) {
+            let alertClass = 'info';
+            if (type === 'success') alertClass = 'success';
+            else if (type === 'error') alertClass = 'error';
+            else if (type === 'warning') alertClass = 'warning';
+            
+            const alertHtml = `
+                <div class="alert alert-${alertClass}">
+                    ${message}
+                </div>
+            `;
+            
+            // Insert at top of current section
+            const activeSection = document.querySelector('.content-section.active');
+            const firstChild = activeSection.firstElementChild;
+            const alertDiv = document.createElement('div');
+            alertDiv.innerHTML = alertHtml;
+            activeSection.insertBefore(alertDiv.firstElementChild, firstChild.nextSibling);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                alertDiv.firstElementChild?.remove();
+            }, 5000);
+        }
+
+        // Load test results
+        async function loadTestResults() {
+            try {
+                console.log('📊 Loading test results...');
+                const response = await fetch('/api/phase2/tests');
+                const data = await response.json();
+                
+                if (data.success && data.tests && data.tests.length > 0) {
+                    displayTestResults(data.tests);
+                } else {
+                    // Show empty state
+                    document.getElementById('resultsContainer').innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📊</div>
+                            <p>No test results yet. Execute a test to see results here.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading test results:', error);
+                showAlert('error', 'Failed to load test results');
+            }
+        }
+        
+        // Display test results
+        function displayTestResults(tests) {
+            const container = document.getElementById('resultsContainer');
+            
+            const html = tests.map(test => {
+                const status = test.passed === test.totalSteps ? 'success' : 'failure';
+                const icon = test.passed === test.totalSteps ? '✅' : '⚠️';
+                const date = new Date(test.timestamp).toLocaleString();
+                
+                return `
+                    <div class="test-result">
+                        <div class="result-header">
+                            <strong>${icon} Test ${test.testId}</strong>
+                            <span class="result-status ${status}">
+                                ${test.passed}/${test.totalSteps} PASSED
+                            </span>
+                        </div>
+                        <p><strong>Date:</strong> ${date}</p>
+                        <p><strong>Duration:</strong> ${test.duration || 0}ms</p>
+                        <p><strong>Steps:</strong> ${test.totalSteps} total, ${test.failed} failed</p>
+                        
+                        <div style="margin-top: 12px; display: flex; gap: 12px;">
+                            <button class="btn btn-secondary" onclick="loadTestReport('${test.testId}')">
+                                📊 View Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = html;
+        }
+        
+        // Load detailed test report
+        async function loadTestReport(testId) {
+            try {
+                const response = await fetch(`/api/phase2/report/${testId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayDetailedReport(testId, data.report);
+                } else {
+                    showAlert('error', 'Failed to load test report');
+                }
+            } catch (error) {
+                console.error('Error loading test report:', error);
+                showAlert('error', 'Failed to load test report');
+            }
+        }
+        
+        // Display detailed test report with screenshots
+        function displayDetailedReport(testId, report) {
+            const container = document.getElementById('resultsContainer');
+            
+            const overallStatus = report.passedSteps === report.totalSteps ? 'success' : 'failure';
+            const icon = report.passedSteps === report.totalSteps ? '✅' : '⚠️';
+            
+            // Generate steps HTML with screenshots and details
+            const stepsHtml = report.steps.map((step, index) => {
+                const stepStatus = step.status === 'passed' ? 'success' : 'failure';
+                const stepIcon = step.status === 'passed' ? '✅' : '❌';
+                
+                return `
+                    <div class="test-result" style="margin-bottom: 16px; border-left: 4px solid ${step.status === 'passed' ? 'var(--success)' : 'var(--danger)'};">
+                        <div class="result-header">
+                            <strong>${stepIcon} Step ${step.stepNumber}: ${step.description}</strong>
+                            <span class="result-status ${stepStatus}">
+                                ${step.status.toUpperCase()}
+                            </span>
+                        </div>
+                        
+                        <p><strong>Action:</strong> ${step.action} ${step.target ? `→ ${step.target}` : ''}</p>
+                        ${step.data ? `<p><strong>Data:</strong> ${step.data}</p>` : ''}
+                        <p><strong>Duration:</strong> ${step.duration || 0}ms</p>
+                        
+                        ${step.expectedBehavior ? `
+                            <div style="background: #e3f2fd; padding: 12px; border-radius: 4px; margin: 8px 0;">
+                                <strong>Expected:</strong> ${step.expectedBehavior}
+                            </div>
+                        ` : ''}
+                        
+                        ${step.aiCorrection && step.aiCorrection.used ? `
+                            <div style="background: linear-gradient(135deg, #e8f5e9 0%, #d1fae5 100%); padding: 16px; border-radius: 8px; margin: 8px 0; border-left: 4px solid var(--success);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                                    <strong style="font-size: 15px; color: var(--success);">🤖 AI Auto-Adaptation Applied</strong>
+                                    <span style="background: var(--success); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">INTELLIGENT</span>
+                                </div>
+                                
+                                <div style="background: white; padding: 12px; border-radius: 6px; margin-bottom: 8px;">
+                                    <strong style="color: var(--danger);">❌ Original Selector Failed:</strong><br>
+                                    <code style="background: #fee2e2; padding: 4px 8px; border-radius: 4px; font-size: 12px; display: inline-block; margin-top: 4px;">${step.aiCorrection.originalSelector}</code>
+                                </div>
+                                
+                                <div style="background: white; padding: 12px; border-radius: 6px; margin-bottom: 8px;">
+                                    <strong style="color: var(--success);">✅ AI Found Correct Element:</strong><br>
+                                    <code style="background: #d1fae5; padding: 4px 8px; border-radius: 4px; font-size: 12px; display: inline-block; margin-top: 4px;">${step.aiCorrection.correctedSelector}</code>
+                                </div>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
+                                    <div style="background: white; padding: 8px; border-radius: 4px;">
+                                        <strong>🔧 Correction Source:</strong><br>
+                                        <span style="color: var(--primary);">${step.aiCorrection.source}</span>
+                                    </div>
+                                    <div style="background: white; padding: 8px; border-radius: 4px;">
+                                        <strong>🔄 Attempts:</strong><br>
+                                        <span style="color: var(--text);">${step.aiCorrection.attempts} (1 failed, 1 succeeded)</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-top: 12px; padding: 8px; background: #fef3c7; border-radius: 4px; font-size: 12px;">
+                                    <strong>💡 Learning:</strong> This correction has been stored in the knowledge base. Future tests will use the corrected selector automatically (faster & free)!
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${step.actualBehavior ? `
+                            <div style="background: ${step.status === 'passed' ? '#e8f5e9' : '#ffebee'}; padding: 12px; border-radius: 4px; margin: 8px 0; white-space: pre-wrap;">
+                                <strong>Actual:</strong> ${step.actualBehavior}
+                            </div>
+                        ` : ''}
+                        
+                        ${step.error ? `
+                            <div class="alert alert-error" style="margin: 8px 0;">
+                                <strong>❌ Error:</strong> ${step.error}
+                                ${step.errorDetails ? `<br><small>${step.errorDetails}</small>` : ''}
+                            </div>
+                        ` : ''}
+                        
+                        ${step.screenshot ? `
+                            <div style="margin: 12px 0;">
+                                <strong>📸 Screenshot (Failure):</strong><br>
+                                <img src="${step.screenshot}" alt="Step ${step.stepNumber} screenshot" 
+                                     style="max-width: 100%; border: 2px solid var(--danger); border-radius: 4px; margin-top: 8px; cursor: pointer;"
+                                     onclick="window.open('${step.screenshot}', '_blank')">
+                                <p style="font-size: 12px; color: #666; margin-top: 4px;">Click to view full size</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${step.aiAnalysis ? `
+                            <div style="margin: 12px 0; padding: 16px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 8px; border-left: 4px solid var(--primary);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                                    <strong style="font-size: 16px;">🤖 AI-Powered Failure Analysis</strong>
+                                    ${step.aiAnalysis.understood ? 
+                                        `<span style="background: var(--success); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px;">UNDERSTOOD</span>` :
+                                        `<span style="background: var(--danger); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px;">NOT UNDERSTOOD</span>`
+                                    }
+                                    ${step.aiAnalysis.confidence ? 
+                                        `<span style="color: var(--text-light); font-size: 12px;">${step.aiAnalysis.confidence}% confident</span>` : ''
+                                    }
+                                </div>
+                                
+                                ${step.aiAnalysis.userIntent ? `
+                                    <div style="margin: 8px 0; padding: 12px; background: white; border-radius: 4px;">
+                                        <strong>💭 User Intent:</strong>
+                                        <p style="margin: 4px 0;">${step.aiAnalysis.userIntent}</p>
+                                    </div>
+                                ` : ''}
+                                
+                                ${step.aiAnalysis.possibleIssues && step.aiAnalysis.possibleIssues.length > 0 ? `
+                                    <div style="margin: 8px 0; padding: 12px; background: #fff3cd; border-radius: 4px;">
+                                        <strong>⚠️ Possible Issues:</strong>
+                                        <ul style="margin: 4px 0; padding-left: 20px;">
+                                            ${step.aiAnalysis.possibleIssues.map(issue => `<li>${issue}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                ` : ''}
+                                
+                                ${step.aiAnalysis.suggestedFixes && step.aiAnalysis.suggestedFixes.length > 0 ? `
+                                    <div style="margin: 8px 0; padding: 12px; background: #d1f5d3; border-radius: 4px;">
+                                        <strong>🔧 Suggested Fixes:</strong>
+                                        <ol style="margin: 4px 0; padding-left: 20px;">
+                                            ${step.aiAnalysis.suggestedFixes.map(fix => `<li>${fix}</li>`).join('')}
+                                        </ol>
+                                    </div>
+                                ` : ''}
+                                
+                                ${step.aiAnalysis.learnings && step.aiAnalysis.learnings.length > 0 ? `
+                                    <div style="margin: 8px 0; padding: 12px; background: #e3f2fd; border-radius: 4px;">
+                                        <strong>📚 Past Solutions:</strong>
+                                        <ul style="margin: 4px 0; padding-left: 20px;">
+                                            ${step.aiAnalysis.learnings.map(learning => `<li>${learning}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                ` : ''}
+                                
+                                ${step.aiAnalysis.liveLog && step.aiAnalysis.liveLog.length > 0 ? `
+                                    <details style="margin: 8px 0;">
+                                        <summary style="cursor: pointer; font-weight: 500; padding: 8px; background: white; border-radius: 4px;">
+                                            📋 View Live Analysis Log (${step.aiAnalysis.liveLog.length} steps)
+                                        </summary>
+                                        <div style="margin-top: 8px; padding: 12px; background: #f8f9fa; border-radius: 4px; font-family: monospace; font-size: 12px;">
+                                            ${step.aiAnalysis.liveLog.map(log => `<div style="padding: 4px 0;">${log}</div>`).join('')}
+                                        </div>
+                                    </details>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                        
+                        ${step.consoleErrors && step.consoleErrors.length > 0 ? `
+                            <details style="margin: 8px 0;">
+                                <summary style="cursor: pointer; font-weight: bold;">🔴 Console Errors (${step.consoleErrors.length})</summary>
+                                <div style="background: #fff3cd; padding: 8px; margin-top: 8px; border-radius: 4px; font-size: 12px;">
+                                    ${step.consoleErrors.map(e => `<div>• ${e}</div>`).join('')}
+                                </div>
+                            </details>
+                        ` : ''}
+                        
+                        ${step.networkErrors && step.networkErrors.length > 0 ? `
+                            <details style="margin: 8px 0;">
+                                <summary style="cursor: pointer; font-weight: bold;">🌐 Network Errors (${step.networkErrors.length})</summary>
+                                <div style="background: #ffebee; padding: 8px; margin-top: 8px; border-radius: 4px; font-size: 12px;">
+                                    ${step.networkErrors.map(e => `<div>• ${e.url}: ${e.error}</div>`).join('')}
+                                </div>
+                            </details>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-secondary" onclick="loadTestResults()">
+                        ← Back to All Tests
+                    </button>
+                </div>
+                
+                <div class="test-result" style="border: 2px solid ${overallStatus === 'success' ? 'var(--success)' : 'var(--danger)'};">
+                    <div class="result-header">
+                        <strong>${icon} Test ${testId} - Detailed Report</strong>
+                        <span class="result-status ${overallStatus}">
+                            ${report.passedSteps}/${report.totalSteps} PASSED
+                        </span>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 16px 0;">
+                        <div>
+                            <strong>Total Duration:</strong> ${report.duration || 0}ms
+                        </div>
+                        <div>
+                            <strong>Passed Steps:</strong> <span style="color: var(--success)">${report.passedSteps}</span>
+                        </div>
+                        <div>
+                            <strong>Failed Steps:</strong> <span style="color: var(--danger)">${report.failedSteps}</span>
+                        </div>
+                        <div>
+                            <strong>Timestamp:</strong> ${new Date(report.timestamp).toLocaleString()}
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 style="margin: 24px 0 16px 0;">Step-by-Step Execution:</h3>
+                
+                ${stepsHtml}
+            `;
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Save test (placeholder)
+        function saveTest() {
+            alert('Test saved! (Feature coming soon)');
+        }
+
+        // ==================== TEST SUITES FUNCTIONS ====================
+
+        let currentSuites = [];
+        let currentEditingSuite = null;
+        let currentEditingTest = null;
+        
+        // Live execution status tracking (for polling)
+        let activePolls = {}; // { suiteId: intervalId }
+        let executionStates = {}; // { suiteId: statusData }
+
+        // Load all suites
+        async function loadSuites() {
+            try {
+                const response = await fetch('/api/suites');
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentSuites = data.suites;
+                    displaySuites(currentSuites);
+                }
+            } catch (error) {
+                console.error('Error loading suites:', error);
+            }
+        }
+
+        // Display suites in tree structure
+        function displaySuites(suites) {
+            const container = document.getElementById('suitesContainer');
+            
+            if (!suites || suites.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📁</div>
+                        <p>No test suites yet. Create one to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = suites.map(suite => renderSuiteCard(suite)).join('');
+        }
+
+        /**
+         * Live Execution Status Polling
+         * 
+         * PURPOSE: Poll server every 1.5 seconds for execution status
+         * DESIGNED FOR: Easy upgrade to WebSocket later
+         */
+        
+        // Start polling for a suite's execution status
+        function startStatusPolling(suiteId) {
+            // Don't start if already polling
+            if (activePolls[suiteId]) {
+                console.log(`Already polling suite: ${suiteId}`);
+                return;
+            }
+            
+            console.log(`📊 Starting status polling for suite: ${suiteId}`);
+            
+            // Initial fetch
+            fetchExecutionStatus(suiteId);
+            
+            // Poll every 1.5 seconds
+            const intervalId = setInterval(() => {
+                fetchExecutionStatus(suiteId);
+            }, 1500);
+            
+            activePolls[suiteId] = intervalId;
+        }
+        
+        // Stop polling for a suite
+        function stopStatusPolling(suiteId) {
+            if (activePolls[suiteId]) {
+                clearInterval(activePolls[suiteId]);
+                delete activePolls[suiteId];
+                delete executionStates[suiteId];
+                console.log(`📊 Stopped status polling for suite: ${suiteId}`);
+                
+                // Refresh the UI
+                loadSuites();
+            }
+        }
+        
+        // Fetch execution status from server
+        async function fetchExecutionStatus(suiteId) {
+            try {
+                const response = await fetch(`/api/suites/${suiteId}/status`);
+                const data = await response.json();
+                
+                if (data.success && data.status !== 'idle') {
+                    executionStates[suiteId] = data;
+                    
+                    // Update UI for this specific suite
+                    updateSuiteStatusInUI(suiteId, data);
+                    
+                    // If execution is completed, stop polling after a delay
+                    if (data.status === 'completed') {
+                        setTimeout(() => {
+                            stopStatusPolling(suiteId);
+                        }, 3000); // Keep showing final status for 3 seconds
+                    }
+                } else {
+                    // No active execution, stop polling
+                    stopStatusPolling(suiteId);
+                }
+            } catch (error) {
+                console.error(`Failed to fetch status for suite ${suiteId}:`, error);
+            }
+        }
+        
+        // Update suite status in UI (without full reload)
+        function updateSuiteStatusInUI(suiteId, statusData) {
+            const suiteCard = document.querySelector(`[data-suite-id="${suiteId}"]`);
+            if (!suiteCard) return;
+            
+            // Find status indicator element
+            const statusIndicator = suiteCard.querySelector('.suite-live-status');
+            if (!statusIndicator) return;
+            
+            // Update status indicator
+            const percentage = statusData.progress?.percentage || 0;
+            const duration = Math.floor((statusData.duration || 0) / 1000);
+            
+            let statusHTML = '';
+            if (statusData.status === 'running') {
+                statusHTML = `
+                    <div class="live-status-badge running">
+                        🔴 RUNNING ${percentage}%
+                        <span style="font-size: 11px; margin-left: 4px;">⏱️ ${duration}s</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${percentage}%"></div>
+                    </div>
+                    <div class="live-counts">
+                        ${statusData.counts.passed > 0 ? `✅ ${statusData.counts.passed}` : ''}
+                        ${statusData.counts.running > 0 ? `🟡 ${statusData.counts.running}` : ''}
+                        ${statusData.counts.failed > 0 ? `❌ ${statusData.counts.failed}` : ''}
+                        ${statusData.counts.queued > 0 ? `⏳ ${statusData.counts.queued}` : ''}
+                    </div>
+                `;
+            } else if (statusData.status === 'completed') {
+                statusHTML = `
+                    <div class="live-status-badge completed">
+                        ✅ COMPLETED ${percentage}%
+                        <span style="font-size: 11px; margin-left: 4px;">⏱️ ${duration}s</span>
+                    </div>
+                    <div class="live-counts">
+                        ✅ ${statusData.counts.passed} passed
+                        ${statusData.counts.failed > 0 ? `• ❌ ${statusData.counts.failed} failed` : ''}
+                    </div>
+                `;
+            }
+            
+            statusIndicator.innerHTML = statusHTML;
+            
+            // Update individual test statuses if visible
+            if (statusData.tests) {
+                Object.keys(statusData.tests).forEach(testId => {
+                    const testStatus = statusData.tests[testId];
+                    const testElement = suiteCard.querySelector(`[data-test-id="${testId}"] .test-live-status`);
+                    
+                    if (testElement) {
+                        let testStatusHTML = '';
+                        switch (testStatus.status) {
+                            case 'running':
+                                testStatusHTML = `<span class="test-status-live running">🟡 RUNNING...</span>`;
+                                break;
+                            case 'passed':
+                                testStatusHTML = `<span class="test-status-live passed">✅ PASSED</span>`;
+                                break;
+                            case 'failed':
+                                testStatusHTML = `<span class="test-status-live failed">❌ FAILED</span>`;
+                                break;
+                            case 'queued':
+                                testStatusHTML = `<span class="test-status-live queued">⏳ QUEUED</span>`;
+                                break;
+                        }
+                        testElement.innerHTML = testStatusHTML;
+                    }
+                });
+            }
+        }
+        
+        // Render individual suite card
+        function renderSuiteCard(suite, level = 0) {
+            const indent = level * 20;
+            const passRate = suite.stats?.successRate || 0;
+            const statusColor = passRate === 100 ? 'var(--success)' : passRate > 50 ? 'var(--warning)' : 'var(--danger)';
+            const lastRun = suite.lastRun ? new Date(suite.lastRun).toLocaleString() : 'Never';
+            
+            let html = `
+                <div class="suite-card" style="margin-left: ${indent}px;" data-suite-id="${suite.id}">
+                    <div class="suite-header">
+                        <div class="suite-info">
+                            <h3>
+                                📁 ${suite.name}
+                                ${suite.tags?.map(tag => `<span class="tag tag-${tag}">${tag}</span>`).join('') || ''}
+                            </h3>
+                            <p>${suite.description || 'No description'}</p>
+                            
+                            <!-- Live Execution Status -->
+                            <div class="suite-live-status"></div>
+                            
+                            <div class="suite-stats">
+                                <span>📊 ${suite.tests?.length || 0} tests</span>
+                                <span>•</span>
+                                <span>🕐 Last run: ${lastRun}</span>
+                                ${suite.stats?.totalRuns > 0 ? `
+                                    <span>•</span>
+                                    <span style="color: ${statusColor}">✓ ${passRate}% pass rate</span>
+                                ` : ''}
+                                ${suite.schedule?.enabled ? `
+                                    <span>•</span>
+                                    <span>⏰ Scheduled</span>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div class="suite-actions">
+                            <button class="btn-icon" onclick="runSuite('${suite.id}')" title="Run Suite">▶️</button>
+                            <button class="btn-icon" onclick="showAddTestModal('${suite.id}')" title="Add Test">➕</button>
+                            <button class="btn-icon" onclick="editSuite('${suite.id}')" title="Edit">✏️</button>
+                            <button class="btn-icon" onclick="cloneSuite('${suite.id}')" title="Clone">📋</button>
+                            <button class="btn-icon" onclick="exportSuite('${suite.id}')" title="Export">📤</button>
+                            <button class="btn-icon" onclick="showScheduleModal('${suite.id}')" title="Schedule">⏰</button>
+                            <button class="btn-icon" onclick="deleteSuite('${suite.id}')" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+                    
+                    ${suite.tests && suite.tests.length > 0 ? `
+                        <div class="suite-tests">
+                            ${suite.tests.map(test => `
+                                <div class="test-item ${test.enabled === false ? 'disabled' : ''}" data-test-id="${test.id}">
+                                    <div class="test-info">
+                                        <strong>📄 ${test.name}</strong>
+                                        <span>${test.steps?.length || 0} steps</span>
+                                        ${test.assertions && test.assertions.length > 0 ? `
+                                            <span style="font-size: 12px; color: var(--primary);">🎯 ${test.assertions.length} assertion(s)</span>
+                                        ` : ''}
+                                        <!-- Live status (updates during execution) -->
+                                        <span class="test-live-status"></span>
+                                        ${test.lastResult ? `
+                                            <span class="test-status ${test.lastResult.success ? 'success' : 'failure'}">
+                                                ${test.lastResult.success ? '✅ Passed' : '❌ Failed'}
+                                            </span>
+                                        ` : ''}
+                                    </div>
+                                    <div class="test-actions">
+                                        <button class="btn-icon-sm" onclick="runSingleTest('${suite.id}', '${test.id}')" title="Run">▶️</button>
+                                        <button class="btn-icon-sm" onclick="editTest('${suite.id}', '${test.id}')" title="Edit">✏️</button>
+                                        <button class="btn-icon-sm" onclick="toggleTest('${suite.id}', '${test.id}', ${test.enabled !== false})" title="Toggle">
+                                            ${test.enabled !== false ? '🔓' : '🔒'}
+                                        </button>
+                                        <button class="btn-icon-sm" onclick="removeTest('${suite.id}', '${test.id}')" title="Remove">🗑️</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            // Render children (nested folders)
+            if (suite.children && suite.children.length > 0) {
+                html += suite.children.map(child => renderSuiteCard(child, level + 1)).join('');
+            }
+            
+            return html;
+        }
+
+        // Show create suite modal
+        function showCreateSuiteModal(parentId = null) {
+            currentEditingSuite = null;
+            document.getElementById('suiteModalTitle').textContent = 'Create New Test Suite';
+            document.getElementById('suiteName').value = '';
+            document.getElementById('suiteDescription').value = '';
+            document.getElementById('suiteParent').value = parentId || '';
+            document.getElementById('suiteTags').value = '';
+            document.getElementById('suiteModal').style.display = 'flex';
+        }
+
+        // Edit existing suite
+        async function editSuite(suiteId) {
+            try {
+                const response = await fetch(`/api/suites/${suiteId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentEditingSuite = data.suite;
+                    document.getElementById('suiteModalTitle').textContent = 'Edit Test Suite';
+                    document.getElementById('suiteName').value = data.suite.name;
+                    document.getElementById('suiteDescription').value = data.suite.description || '';
+                    document.getElementById('suiteParent').value = data.suite.parentId || '';
+                    document.getElementById('suiteTags').value = data.suite.tags?.join(', ') || '';
+                    document.getElementById('suiteModal').style.display = 'flex';
+                }
+            } catch (error) {
+                showAlert('error', 'Failed to load suite details');
+            }
+        }
+
+        // Save suite (create or update)
+        async function saveSuite() {
+            const name = document.getElementById('suiteName').value.trim();
+            const description = document.getElementById('suiteDescription').value.trim();
+            const parentId = document.getElementById('suiteParent').value || null;
+            const tagsInput = document.getElementById('suiteTags').value.trim();
+            const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()) : [];
+            
+            if (!name) {
+                showAlert('error', 'Suite name is required');
+                return;
+            }
+            
+            const suiteData = {
+                name,
+                description,
+                parentId,
+                tags,
+                tests: currentEditingSuite?.tests || []
+            };
+            
+            try {
+                let response;
+                if (currentEditingSuite) {
+                    // Update existing
+                    response = await fetch(`/api/suites/${currentEditingSuite.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(suiteData)
+                    });
+                } else {
+                    // Create new
+                    response = await fetch('/api/suites', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(suiteData)
+                    });
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('success', currentEditingSuite ? 'Suite updated successfully' : 'Suite created successfully');
+                    closeModal('suiteModal');
+                    loadSuites();
+                } else {
+                    showAlert('error', data.error || 'Failed to save suite');
+                }
+            } catch (error) {
+                showAlert('error', 'Failed to save suite');
+            }
+        }
+
+        // Delete suite
+        async function deleteSuite(suiteId) {
+            if (!confirm('Are you sure you want to delete this suite? This will also delete all nested suites.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/suites/${suiteId}`, { method: 'DELETE' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('success', 'Suite deleted successfully');
+                    loadSuites();
+                } else {
+                    showAlert('error', data.error || 'Failed to delete suite');
+                }
+            } catch (error) {
+                showAlert('error', 'Failed to delete suite');
+            }
+        }
+
+        // Clone suite
+        async function cloneSuite(suiteId) {
+            try {
+                const response = await fetch(`/api/suites/${suiteId}/clone`, { method: 'POST' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('success', 'Suite cloned successfully');
+                    loadSuites();
+                } else {
+                    showAlert('error', data.error || 'Failed to clone suite');
+                }
+            } catch (error) {
+                showAlert('error', 'Failed to clone suite');
+            }
+        }
+
+        // Export suite
+        async function exportSuite(suiteId) {
+            try {
+                const response = await fetch(`/api/suites/${suiteId}/export`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Download as JSON file
+                    const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `test-suite-${suiteId}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showAlert('success', 'Suite exported successfully');
+                } else {
+                    showAlert('error', data.error || 'Failed to export suite');
+                }
+            } catch (error) {
+                showAlert('error', 'Failed to export suite');
+            }
+        }
+
+        // Show import modal
+        function showImportModal() {
+            document.getElementById('importModal').style.display = 'flex';
+        }
+
+        // Import suite
+        async function importSuite() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showAlert('error', 'Please select a file to import');
+                return;
+            }
+            
+            try {
+                const text = await file.text();
+                const importData = JSON.parse(text);
+                
+                const response = await fetch('/api/suites/import', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(importData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('success', 'Suite imported successfully');
+                    closeModal('importModal');
+                    loadSuites();
+                } else {
+                    showAlert('error', data.error || 'Failed to import suite');
+                }
+            } catch (error) {
+                showAlert('error', 'Invalid import file or failed to import');
+            }
+        }
+
+        // Show add test modal
+        function showAddTestModal(suiteId) {
+            currentEditingSuite = { id: suiteId };
+            currentEditingTest = null;
+            document.getElementById('testModalTitle').textContent = 'Add New Test';
+            document.getElementById('testName').value = '';
+            document.getElementById('testDescription').value = '';
+            document.getElementById('testNaturalLanguage').value = '';
+            document.getElementById('testSteps').value = '';
+            document.getElementById('testStepsConverted').value = '';
+            document.getElementById('testTags').value = '';
+            document.getElementById('convertedStepsPreview').style.display = 'none';
+            document.getElementById('conversionStatus').style.display = 'none';
+            
+            // Reset to natural language mode
+            document.querySelector('input[name="inputMode"][value="natural"]').checked = true;
+            switchInputMode('natural');
+            
+            // Reset assertions
+            currentAssertions = [];
+            renderAssertions();
+            
+            document.getElementById('testModal').style.display = 'flex';
+        }
+        
+        // Assertions management
+        let currentAssertions = [];
+        
+        function addAssertion() {
+            const assertion = {
+                id: `assertion_${Date.now()}`,
+                type: 'element_visible',
+                target: '',
+                expected: '',
+                description: ''
+            };
+            currentAssertions.push(assertion);
+            renderAssertions();
+        }
+        
+        function removeAssertion(assertionId) {
+            currentAssertions = currentAssertions.filter(a => a.id !== assertionId);
+            renderAssertions();
+        }
+        
+        function renderAssertions() {
+            const container = document.getElementById('assertionsList');
+            
+            if (currentAssertions.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); font-size: 13px;">No assertions added yet</p>';
+                return;
+            }
+            
+            container.innerHTML = currentAssertions.map((assertion, index) => `
+                <div class="assertion-item" style="background: var(--light); padding: 16px; border-radius: 8px; margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <strong style="font-size: 14px;">Assertion ${index + 1}</strong>
+                        <button class="btn-icon-sm" onclick="removeAssertion('${assertion.id}')" title="Remove">🗑️</button>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <label style="font-size: 12px;">Assertion Type</label>
+                            <select class="form-input" onchange="updateAssertion('${assertion.id}', 'type', this.value)" style="font-size: 13px;">
+                                <option value="element_visible" ${assertion.type === 'element_visible' ? 'selected' : ''}>Element is Visible</option>
+                                <option value="element_hidden" ${assertion.type === 'element_hidden' ? 'selected' : ''}>Element is Hidden</option>
+                                <option value="text_equals" ${assertion.type === 'text_equals' ? 'selected' : ''}>Text Equals</option>
+                                <option value="text_contains" ${assertion.type === 'text_contains' ? 'selected' : ''}>Text Contains</option>
+                                <option value="url_equals" ${assertion.type === 'url_equals' ? 'selected' : ''}>URL Equals</option>
+                                <option value="url_contains" ${assertion.type === 'url_contains' ? 'selected' : ''}>URL Contains</option>
+                                <option value="element_count" ${assertion.type === 'element_count' ? 'selected' : ''}>Element Count</option>
+                                <option value="attribute_equals" ${assertion.type === 'attribute_equals' ? 'selected' : ''}>Attribute Equals</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label style="font-size: 12px;">Target (CSS selector or URL)</label>
+                            <input type="text" class="form-input" value="${assertion.target}" 
+                                   onchange="updateAssertion('${assertion.id}', 'target', this.value)" 
+                                   placeholder="e.g., .welcome-message" style="font-size: 13px;">
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 12px;">
+                        <label style="font-size: 12px;">Expected Value</label>
+                        <input type="text" class="form-input" value="${assertion.expected}" 
+                               onchange="updateAssertion('${assertion.id}', 'expected', this.value)" 
+                               placeholder="e.g., Welcome back!" style="font-size: 13px;">
+                    </div>
+                    
+                    <div style="margin-top: 12px;">
+                        <label style="font-size: 12px;">Description (optional)</label>
+                        <input type="text" class="form-input" value="${assertion.description}" 
+                               onchange="updateAssertion('${assertion.id}', 'description', this.value)" 
+                               placeholder="e.g., Verify user is logged in" style="font-size: 13px;">
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function updateAssertion(assertionId, field, value) {
+            const assertion = currentAssertions.find(a => a.id === assertionId);
+            if (assertion) {
+                assertion[field] = value;
+            }
+        }
+        
+        // Switch between natural language and JSON input modes
+        function switchInputMode(mode) {
+            const naturalInput = document.getElementById('naturalLanguageInput');
+            const jsonInput = document.getElementById('jsonInput');
+            const convertedPreview = document.getElementById('convertedStepsPreview');
+            
+            if (mode === 'natural') {
+                naturalInput.style.display = 'block';
+                jsonInput.style.display = 'none';
+                // Keep converted preview visible if it has content
+            } else {
+                naturalInput.style.display = 'none';
+                jsonInput.style.display = 'block';
+                convertedPreview.style.display = 'none';
+            }
+        }
+        
+        // Convert natural language to test steps
+        async function convertNaturalLanguage() {
+            const naturalLanguage = document.getElementById('testNaturalLanguage').value.trim();
+            
+            if (!naturalLanguage) {
+                showAlert('error', 'Please enter a test description in natural language');
+                return;
+            }
+            
+            const statusDiv = document.getElementById('conversionStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.style.background = '#dbeafe';
+            statusDiv.style.color = '#1e40af';
+            statusDiv.innerHTML = '🔄 Converting natural language to test steps...';
+            
+            try {
+                const response = await fetch('/api/phase1/convert', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ naturalLanguage })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.steps) {
+                    // Display converted steps
+                    document.getElementById('testStepsConverted').value = JSON.stringify(data.steps, null, 2);
+                    document.getElementById('convertedStepsPreview').style.display = 'block';
+                    
+                    statusDiv.style.background = '#d1fae5';
+                    statusDiv.style.color = '#065f46';
+                    statusDiv.innerHTML = '✅ Successfully converted! You can review and edit the steps below.';
+                    
+                    // Auto-suggest test name if not set
+                    if (!document.getElementById('testName').value) {
+                        const firstAction = data.steps[0]?.description || data.steps[0]?.action || '';
+                        const suggestedName = firstAction.substring(0, 50) + (firstAction.length > 50 ? '...' : '');
+                        document.getElementById('testName').placeholder = `Suggested: ${suggestedName}`;
+                    }
+                } else {
+                    statusDiv.style.background = '#fee2e2';
+                    statusDiv.style.color = '#991b1b';
+                    statusDiv.innerHTML = '❌ Failed to convert: ' + (data.error || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Error converting natural language:', error);
+                statusDiv.style.background = '#fee2e2';
+                statusDiv.style.color = '#991b1b';
+                statusDiv.innerHTML = '❌ Failed to convert. Please check that Phase 1 service is running.';
+            }
+        }
+
+        // Edit test
+        async function editTest(suiteId, testId) {
+            try {
+                const response = await fetch(`/api/suites/${suiteId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const test = data.suite.tests.find(t => t.id === testId);
+                    if (test) {
+                        currentEditingSuite = { id: suiteId };
+                        currentEditingTest = test;
+                        document.getElementById('testModalTitle').textContent = 'Edit Test';
+                        document.getElementById('testName').value = test.name;
+                        document.getElementById('testDescription').value = test.description || '';
+                        
+                        // Switch to JSON mode for editing
+                        document.querySelector('input[name="inputMode"][value="json"]').checked = true;
+                        switchInputMode('json');
+                        document.getElementById('testSteps').value = JSON.stringify(test.steps, null, 2);
+                        
+                        document.getElementById('testTags').value = test.tags?.join(', ') || '';
+                        
+                        // Load assertions if they exist
+                        currentAssertions = test.assertions || [];
+                        renderAssertions();
+                        
+                        document.getElementById('testModal').style.display = 'flex';
+                    }
+                }
+            } catch (error) {
+                showAlert('error', 'Failed to load test details');
+            }
+        }
+
+        // Save test
+        async function saveTestToSuite() {
+            const name = document.getElementById('testName').value.trim();
+            const description = document.getElementById('testDescription').value.trim();
+            const tagsInput = document.getElementById('testTags').value.trim();
+            const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()) : [];
+            
+            if (!name) {
+                showAlert('error', 'Test name is required');
+                return;
+            }
+            
+            // Get steps based on input mode
+            let steps = [];
+            const inputMode = document.querySelector('input[name="inputMode"]:checked').value;
+            
+            if (inputMode === 'natural') {
+                // Check if steps were converted
+                const convertedSteps = document.getElementById('testStepsConverted').value.trim();
+                if (!convertedSteps) {
+                    showAlert('error', 'Please click "Convert to Test Steps" first');
+                    return;
+                }
+                
+                try {
+                    steps = JSON.parse(convertedSteps);
+                } catch (error) {
+                    showAlert('error', 'Invalid converted steps. Please try converting again.');
+                    return;
+                }
+            } else {
+                // JSON mode
+                const stepsText = document.getElementById('testSteps').value.trim();
+                if (!stepsText) {
+                    showAlert('error', 'Test steps are required');
+                    return;
+                }
+                
+                try {
+                    steps = JSON.parse(stepsText);
+                } catch (error) {
+                    showAlert('error', 'Invalid JSON format for test steps');
+                    return;
+                }
+            }
+            
+            // Validate assertions
+            const validAssertions = currentAssertions.filter(a => a.target && a.type);
+            
+            const testData = {
+                name,
+                description,
+                steps,
+                tags,
+                assertions: validAssertions
+            };
+            
+            try {
+                let response;
+                if (currentEditingTest) {
+                    // Update existing test
+                    response = await fetch(`/api/suites/${currentEditingSuite.id}/tests/${currentEditingTest.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(testData)
+                    });
+                } else {
+                    // Add new test
+                    response = await fetch(`/api/suites/${currentEditingSuite.id}/tests`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(testData)
+                    });
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const assertionsMsg = validAssertions.length > 0 ? ` with ${validAssertions.length} assertion(s)` : '';
+                    showAlert('success', currentEditingTest ? `Test updated successfully${assertionsMsg}` : `Test added successfully${assertionsMsg}`);
+                    closeModal('testModal');
+                    loadSuites();
+                } else {
+                    showAlert('error', data.error || 'Failed to save test');
+                }
+            } catch (error) {
+                showAlert('error', 'Failed to save test');
+            }
+        }
+
+        // Remove test from suite
+        async function removeTest(suiteId, testId) {
+            if (!confirm('Are you sure you want to remove this test?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/suites/${suiteId}/tests/${testId}`, { method: 'DELETE' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('success', 'Test removed successfully');
+                    loadSuites();
+                } else {
+                    showAlert('error', data.error || 'Failed to remove test');
+                }
+            } catch (error) {
+                showAlert('error', 'Failed to remove test');
+            }
+        }
+
+        // Toggle test enabled/disabled
+        async function toggleTest(suiteId, testId, currentlyEnabled) {
+            try {
+                const response = await fetch(`/api/suites/${suiteId}/tests/${testId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enabled: !currentlyEnabled })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    loadSuites();
+                }
+            } catch (error) {
+                showAlert('error', 'Failed to toggle test');
+            }
+        }
+
+        // Run entire suite
+        function runSuite(suiteId) {
+            currentEditingSuite = { id: suiteId };
+            document.getElementById('runModal').style.display = 'flex';
+        }
+
+        // Execute suite with options
+        async function executeSuite() {
+            const mode = document.querySelector('input[name="execMode"]:checked').value;
+            const continueOnFailure = document.getElementById('continueOnFailure').checked;
+            const headless = document.getElementById('headlessMode').checked;
+            
+            const options = {
+                mode,
+                continueOnFailure,
+                executionOptions: {
+                    headless
+                }
+            };
+            
+            closeModal('runModal');
+            
+            const suiteId = currentEditingSuite.id;
+            
+            // Show initial message
+            showAlert('success', '🚀 Starting test suite execution...');
+            
+            // Start polling for live status IMMEDIATELY
+            startStatusPolling(suiteId);
+            
+            try {
+                // Start execution (this runs in background)
+                const response = await fetch(`/api/suites/${suiteId}/run`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ options })
+                });
+                
+                const data = await response.json();
+                
+                // Execution completed
+                if (data.success) {
+                    const summary = data.summary;
+                    const message = `✅ Suite execution complete!\n\nTotal: ${summary.total}\nPassed: ${summary.passed}\nFailed: ${summary.failed}\n\nMode: ${data.mode}`;
+                    
+                    showAlert(summary.failed === 0 ? 'success' : 'warning', message.replace(/\n/g, '<br>'));
+                    
+                    // Stop polling after a delay (to show final state)
+                    setTimeout(() => {
+                        stopStatusPolling(suiteId);
+                    }, 3000);
+                } else {
+                    showAlert('error', 'Suite execution failed: ' + (data.error || 'Unknown error'));
+                    stopStatusPolling(suiteId);
+                }
+            } catch (error) {
+                showAlert('error', 'Failed to execute suite');
+                stopStatusPolling(suiteId);
+            }
+        }
+
+        // Run single test
+        async function runSingleTest(suiteId, testId) {
+            try {
+                const response = await fetch(`/api/suites/${suiteId}`);
+                const suiteData = await response.json();
+                
+                if (suiteData.success) {
+                    const test = suiteData.suite.tests.find(t => t.id === testId);
+                    if (test) {
+                        const execResponse = await fetch('/api/phase2/execute', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                steps: test.steps,
+                                assertions: test.assertions || []
+                            })
+                        });
+                        
+                        const execData = await execResponse.json();
+                        
+                        if (execData.success) {
+                            showAlert('success', `Test "${test.name}" completed successfully!`);
+                            
+                            // Update test with last result
+                            await fetch(`/api/suites/${suiteId}/tests/${testId}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ lastResult: execData.report })
+                            });
+                            
+                            loadSuites();
+                        } else {
+                            showAlert('error', `Test "${test.name}" failed`);
+                        }
+                    }
+                }
+            } catch (error) {
+                showAlert('error', 'Failed to run test');
+            }
+        }
+
+        // Show schedule modal
+        async function showScheduleModal(suiteId) {
+            try {
+                const response = await fetch(`/api/suites/${suiteId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentEditingSuite = data.suite;
+                    document.getElementById('scheduleEnabled').checked = data.suite.schedule?.enabled || false;
+                    document.getElementById('scheduleType').value = data.suite.schedule?.type || 'interval';
+                    document.getElementById('scheduleExpression').value = data.suite.schedule?.expression || '60';
+                    document.getElementById('scheduleModal').style.display = 'flex';
+                }
+            } catch (error) {
+                showAlert('error', 'Failed to load schedule settings');
+            }
+        }
+
+        // Save schedule
+        async function saveSchedule() {
+            const enabled = document.getElementById('scheduleEnabled').checked;
+            const type = document.getElementById('scheduleType').value;
+            const expression = document.getElementById('scheduleExpression').value;
+            
+            const scheduleData = {
+                enabled,
+                type,
+                expression
+            };
+            
+            try {
+                const response = await fetch(`/api/suites/${currentEditingSuite.id}/schedule`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(scheduleData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('success', 'Schedule saved successfully');
+                    closeModal('scheduleModal');
+                    loadSuites();
+                } else {
+                    showAlert('error', data.error || 'Failed to save schedule');
+                }
+            } catch (error) {
+                showAlert('error', 'Failed to save schedule');
+            }
+        }
+
+        // Search suites
+        function searchSuites() {
+            const query = document.getElementById('suiteSearch').value.trim();
+            
+            if (!query) {
+                displaySuites(currentSuites);
+                return;
+            }
+            
+            // Simple client-side search (can be enhanced with server-side search)
+            const filtered = filterSuitesRecursive(currentSuites, query.toLowerCase());
+            displaySuites(filtered);
+        }
+
+        // Recursive filter
+        function filterSuitesRecursive(suites, query) {
+            const filtered = [];
+            
+            for (const suite of suites) {
+                const matchesName = suite.name.toLowerCase().includes(query);
+                const matchesDesc = suite.description?.toLowerCase().includes(query);
+                const matchesTags = suite.tags?.some(tag => tag.toLowerCase().includes(query));
+                
+                if (matchesName || matchesDesc || matchesTags) {
+                    filtered.push(suite);
+                } else if (suite.children) {
+                    const matchingChildren = filterSuitesRecursive(suite.children, query);
+                    if (matchingChildren.length > 0) {
+                        filtered.push({ ...suite, children: matchingChildren });
+                    }
+                }
+            }
+            
+            return filtered;
+        }
+
+        // Filter by tag
+        function filterByTag() {
+            const tag = document.getElementById('tagFilter').value;
+            
+            if (!tag) {
+                displaySuites(currentSuites);
+                return;
+            }
+            
+            const filtered = currentSuites.filter(suite => suite.tags && suite.tags.includes(tag));
+            displaySuites(filtered);
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshDashboard();
+            loadTestResults(); // Load test results on page load
+            
+            // Load suites when Test Suites tab is clicked
+            const testSuitesNav = document.querySelector('.nav-item:nth-child(5)');
+            if (testSuitesNav) {
+                testSuitesNav.addEventListener('click', loadSuites);
+            }
+        });
+    </script>
+
+    <!-- Modals -->
+    
+    <!-- Create/Edit Suite Modal -->
+    <div id="suiteModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 id="suiteModalTitle">Create New Test Suite</h3>
+                <button class="modal-close" onclick="closeModal('suiteModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <label>Suite Name *</label>
+                <input type="text" id="suiteName" class="form-input" placeholder="e.g., Login Tests">
+                
+                <label>Description</label>
+                <textarea id="suiteDescription" class="form-input" rows="3" placeholder="Describe what this suite tests"></textarea>
+                
+                <label>Parent Suite (for nesting)</label>
+                <select id="suiteParent" class="form-input">
+                    <option value="">No parent (top-level)</option>
+                    <!-- Will be populated dynamically -->
+                </select>
+                
+                <label>Tags (comma-separated)</label>
+                <input type="text" id="suiteTags" class="form-input" placeholder="e.g., smoke, regression, critical">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('suiteModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSuite()">Save Suite</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Test Modal -->
+    <div id="testModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 id="testModalTitle">Add New Test</h3>
+                <button class="modal-close" onclick="closeModal('testModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <label>Test Name *</label>
+                <input type="text" id="testName" class="form-input" placeholder="e.g., Valid Login">
+                
+                <label>Description</label>
+                <textarea id="testDescription" class="form-input" rows="2" placeholder="Brief description of the test"></textarea>
+                
+                <!-- Input Mode Switcher -->
+                <div style="margin: 16px 0; display: flex; gap: 12px; align-items: center;">
+                    <label style="margin: 0; font-weight: 600;">Input Mode:</label>
+                    <label style="margin: 0;">
+                        <input type="radio" name="inputMode" value="natural" checked onchange="switchInputMode('natural')"> 
+                        ✨ Natural Language
+                    </label>
+                    <label style="margin: 0;">
+                        <input type="radio" name="inputMode" value="json" onchange="switchInputMode('json')"> 
+                        📝 JSON Format
+                    </label>
+                </div>
+                
+                <!-- Natural Language Input -->
+                <div id="naturalLanguageInput">
+                    <label>Describe Your Test in Plain English *</label>
+                    <textarea id="testNaturalLanguage" class="form-input" rows="6" placeholder="Example:&#10;Go to https://app.example.com&#10;Click on the login button&#10;Enter email user@example.com&#10;Enter password mypassword123&#10;Click submit button&#10;Verify that the welcome message is visible"></textarea>
+                    
+                    <button class="btn btn-primary" onclick="convertNaturalLanguage()" style="margin-bottom: 16px;">
+                        🔄 Convert to Test Steps
+                    </button>
+                    
+                    <div id="conversionStatus" style="display: none; padding: 12px; border-radius: 8px; margin-bottom: 16px;"></div>
+                </div>
+                
+                <!-- JSON Input (hidden by default) -->
+                <div id="jsonInput" style="display: none;">
+                    <label>Test Steps (JSON format) *</label>
+                    <textarea id="testSteps" class="form-input" rows="10" placeholder='[{"stepNumber": 1, "action": "navigate", "target": "https://...", ...}]'></textarea>
+                </div>
+                
+                <!-- Converted Steps Preview -->
+                <div id="convertedStepsPreview" style="display: none; margin-top: 16px;">
+                    <label>✅ Converted Test Steps (you can edit JSON below)</label>
+                    <textarea id="testStepsConverted" class="form-input" rows="10"></textarea>
+                </div>
+                
+                <!-- Assertions Section -->
+                <div style="margin-top: 24px; padding-top: 24px; border-top: 2px solid var(--border);">
+                    <label style="font-size: 16px; margin-bottom: 12px;">🎯 Assertions (Optional)</label>
+                    <p style="font-size: 13px; color: var(--text-light); margin-bottom: 12px;">
+                        Add validation checkpoints to verify expected behavior
+                    </p>
+                    
+                    <div id="assertionsList"></div>
+                    
+                    <button class="btn btn-secondary" onclick="addAssertion()" style="margin-top: 12px;">
+                        ➕ Add Assertion
+                    </button>
+                </div>
+                
+                <label style="margin-top: 16px;">Tags (comma-separated)</label>
+                <input type="text" id="testTags" class="form-input" placeholder="e.g., smoke, critical">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('testModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveTestToSuite()">Save Test</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Run Options Modal -->
+    <div id="runModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Run Suite Options</h3>
+                <button class="modal-close" onclick="closeModal('runModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <label>Execution Mode</label>
+                <div style="margin-bottom: 16px;">
+                    <label><input type="radio" name="execMode" value="sequential" checked> Sequential (one after another)</label><br>
+                    <label><input type="radio" name="execMode" value="parallel"> Parallel (all at once - faster)</label>
+                </div>
+                
+                <label>On Failure</label>
+                <div style="margin-bottom: 16px;">
+                    <label><input type="checkbox" id="continueOnFailure" checked> Continue with remaining tests</label>
+                </div>
+                
+                <label>Browser Options</label>
+                <div>
+                    <label><input type="checkbox" id="headlessMode" checked> Headless mode</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('runModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="executeSuite()">▶️ Run Tests</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="importModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Import Test Suite</h3>
+                <button class="modal-close" onclick="closeModal('importModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <label>Select exported suite JSON file</label>
+                <input type="file" id="importFile" accept=".json" class="form-input">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('importModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="importSuite()">📥 Import</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Modal -->
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Schedule Suite Execution</h3>
+                <button class="modal-close" onclick="closeModal('scheduleModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <label><input type="checkbox" id="scheduleEnabled"> Enable scheduling</label>
+                
+                <label style="margin-top: 16px;">Schedule Type</label>
+                <select id="scheduleType" class="form-input">
+                    <option value="interval">Interval (minutes)</option>
+                    <option value="cron">Cron Expression</option>
+                    <option value="once">One Time</option>
+                </select>
+                
+                <label>Expression</label>
+                <input type="text" id="scheduleExpression" class="form-input" placeholder="e.g., 60 (for 60 minutes)">
+                <small>For interval: enter minutes. For cron: enter cron expression. For once: enter ISO date.</small>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('scheduleModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSchedule()">Save Schedule</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Suite card styles */
+        .suite-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .suite-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .suite-info h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .suite-info p {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .suite-stats {
+            font-size: 13px;
+            color: var(--text-light);
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .suite-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-icon, .btn-icon-sm {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-icon-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .btn-icon:hover, .btn-icon-sm:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .suite-tests {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .test-item {
+            background: var(--light);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .test-item.disabled {
+            opacity: 0.5;
+        }
+
+        .test-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .test-info strong {
+            font-size: 14px;
+        }
+
+        .test-info span {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .test-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .test-status.success {
+            background: #d1fae5;
+            color: var(--success);
+        }
+
+        .test-status.failure {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .test-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .tag-smoke {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .tag-regression {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .tag-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-body label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .modal-body .form-input {
+            margin-bottom: 16px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        
+        /* Live Execution Status Styles */
+        .suite-live-status {
+            margin: 12px 0;
+        }
+        
+        .live-status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .live-status-badge.running {
+            background: linear-gradient(135deg, #fee2e2 0%, #fef3c7 100%);
+            color: #b91c1c;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .live-status-badge.completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--success) 100%);
+            transition: width 0.3s ease-in-out;
+            animation: progressAnimation 1s ease-in-out infinite;
+        }
+        
+        @keyframes progressAnimation {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+        
+        .live-counts {
+            font-size: 12px;
+            display: flex;
+            gap: 12px;
+            color: var(--text-light);
+        }
+        
+        .test-live-status {
+            margin-left: 8px;
+        }
+        
+        .test-status-live {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .test-status-live.running {
+            background: #fef3c7;
+            color: #92400e;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .test-status-live.passed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .test-status-live.failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .test-status-live.queued {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+    </style>
+</body>
+</html>
+

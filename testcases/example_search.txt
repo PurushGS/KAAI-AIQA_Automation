@@ -1,0 +1,20 @@
+Test search functionality
+
+Verify that the search feature works correctly and returns relevant results.
+
+Steps:
+1. Go to https://example.com
+2. Locate the search input field
+3. Type "test query" in the search box
+4. Press Enter or click the search button
+5. Wait for search results to load
+6. Verify that search results are displayed
+7. Verify that results contain the search term
+8. Click on the first result
+9. Verify that the result page opens correctly
+
+Expected Outcome:
+- Search should return relevant results
+- Results should be displayed quickly
+- Clicking a result should navigate to the correct page
+

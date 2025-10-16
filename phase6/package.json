@@ -1,0 +1,20 @@
+{
+  "name": "aiqa-phase6-unified",
+  "version": "1.0.0",
+  "description": "AIQA Phase 6 - Unified Platform Dashboard",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["unified-platform", "dashboard", "integration", "aiqa"],
+  "author": "AIQA Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
+  }
+}
+

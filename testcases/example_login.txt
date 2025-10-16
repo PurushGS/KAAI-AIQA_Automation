@@ -1,0 +1,20 @@
+Test login and logout flow
+
+This test verifies the complete login and logout functionality of a web application.
+
+Steps:
+1. Navigate to https://example.com
+2. Click on the login button
+3. Enter username in the username field
+4. Enter password in the password field
+5. Click the submit button
+6. Verify that the dashboard page is visible
+7. Click the logout button
+8. Verify that the user is returned to the login page
+
+Expected Outcome:
+- User should be able to log in successfully
+- Dashboard should be displayed after login
+- User should be able to log out
+- Login page should be displayed after logout
+

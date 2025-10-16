@@ -1,0 +1,19 @@
+{
+  "name": "aiqa-phase4",
+  "version": "1.0.0",
+  "description": "Phase 4: Learning System",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "openai": "^4.20.0",
+    "uuid": "^9.0.1"
+  }
+}
+

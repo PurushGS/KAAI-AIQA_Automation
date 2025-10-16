@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 2: Screenshot & Logs System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      color: #1f2937;
+      margin-bottom: 10px;
+    }
+    
+    .header .phase-badge {
+      display: inline-block;
+      background: #10b981;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .header p {
+      margin-top: 10px;
+      color: #6b7280;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .card h2 {
+      font-size: 20px;
+      color: #1f2937;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    textarea {
+      width: 100%;
+      min-height: 300px;
+      padding: 15px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      resize: vertical;
+      margin-bottom: 15px;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .btn-secondary {
+      background: #667eea;
+    }
+    
+    .btn-secondary:hover {
+      background: #5568d3;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #10b981;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .step-result {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-left: 4px solid #d1d5db;
+    }
+    
+    .step-result.passed {
+      border-left-color: #10b981;
+      background: #d1fae5;
+    }
+    
+    .step-result.failed {
+      border-left-color: #ef4444;
+      background: #fee2e2;
+    }
+    
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .step-title {
+      font-weight: 600;
+      font-size: 16px;
+      color: #1f2937;
+    }
+    
+    .step-status {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .step-status.passed {
+      background: #10b981;
+      color: white;
+    }
+    
+    .step-status.failed {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin: 15px 0;
+    }
+    
+    @media (max-width: 968px) {
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .comparison-box {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .comparison-box h4 {
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: #6b7280;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    
+    .comparison-box.expected {
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+      border: 2px solid #3b82f6;
+    }
+    
+    .comparison-box.expected h4 {
+      color: #1e40af;
+      font-weight: 700;
+    }
+    
+    .comparison-box.actual h4 {
+      color: #6b21a8;
+      font-weight: 600;
+    }
+    
+    .comparison-box p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #1f2937;
+      font-weight: 500;
+    }
+    
+    .comparison-box.expected p {
+      color: #1e3a8a;
+      font-weight: 600;
+    }
+    
+    .screenshot-box {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .screenshot-box h4 {
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: #6b7280;
+      font-weight: 600;
+    }
+    
+    .screenshot-box img {
+      max-width: 100%;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    .screenshot-box img:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+    
+    .alert {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .alert-error {
+      background: #fee2e2;
+      color: #991b1b;
+      border-left: 4px solid #ef4444;
+    }
+    
+    .alert-success {
+      background: #d1fae5;
+      color: #065f46;
+      border-left: 4px solid #10b981;
+    }
+    
+    .alert-info {
+      background: #dbeafe;
+      color: #1e40af;
+      border-left: 4px solid #3b82f6;
+    }
+    
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    
+    .summary-box {
+      background: #f9fafb;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .summary-box .number {
+      font-size: 36px;
+      font-weight: bold;
+      color: #667eea;
+    }
+    
+    .summary-box .label {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 5px;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .example-steps {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+    
+    .example-steps h3 {
+      font-size: 14px;
+      color: #374151;
+      margin-bottom: 10px;
+    }
+    
+    .example-steps pre {
+      background: white;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      overflow-x: auto;
+    }
+    
+    .match-indicator {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+    
+    .match-indicator.match {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .match-indicator.mismatch {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span class="phase-badge">PHASE 2</span>
+      <h1>📸 Screenshot & Logs System</h1>
+      <p>Execute test steps with comprehensive logging and screenshot capture. Compare expected vs actual behavior at each step.</p>
+    </div>
+    
+    <div class="card">
+      <h2>🚀 Execute Test Steps</h2>
+      
+      <div class="alert alert-info">
+        <strong>💡 Integration with Phase 1:</strong> Paste test steps JSON from Phase 1 below, or write your own structured steps.
+      </div>
+      
+      <textarea id="stepsInput" placeholder='Paste test steps JSON from Phase 1 here, for example:
+
+[
+  {
+    "stepNumber": 1,
+    "action": "navigate",
+    "target": "https://example.com",
+    "description": "Navigate to example.com"
+  },
+  {
+    "stepNumber": 2,
+    "action": "verify",
+    "target": "h1",
+    "expected": "element visible",
+    "description": "Verify page title exists"
+  }
+]'></textarea>
+      
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button class="btn" onclick="executeTest()" id="executeBtn">
+          🚀 Execute Test
+        </button>
+        
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #6b7280;">
+          <input type="checkbox" id="headlessMode">
+          Run in headless mode (no browser window)
+        </label>
+      </div>
+      
+      <div class="example-steps">
+        <h3>💡 Example Test Steps (Google Search):</h3>
+        <pre>[
+  {
+    "stepNumber": 1,
+    "action": "navigate",
+    "target": "https://www.google.com",
+    "description": "Navigate to Google"
+  },
+  {
+    "stepNumber": 2,
+    "action": "verify",
+    "target": "textarea[name=q]",
+    "expected": "element visible",
+    "description": "Verify search box exists"
+  }
+]</pre>
+      </div>
+    </div>
+    
+    <div id="resultsContainer" class="hidden">
+      <div class="card">
+        <h2>📊 Test Results</h2>
+        
+        <div id="summaryContainer" class="summary"></div>
+        
+        <div id="statusMessage"></div>
+        
+        <div id="stepsResults"></div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    let currentReport = null;
+    
+    /**
+     * Generate advanced logging section
+     * Shows network errors, console errors, and page errors
+     */
+    function generateAdvancedLogs(step) {
+      const hasNetworkErrors = step.networkErrors && step.networkErrors.length > 0;
+      const hasConsoleErrors = step.consoleErrors && step.consoleErrors.length > 0;
+      const hasConsoleWarnings = step.consoleWarnings && step.consoleWarnings.length > 0;
+      const hasPageErrors = step.pageErrors && step.pageErrors.length > 0;
+      
+      // If no advanced logs, return empty
+      if (!hasNetworkErrors && !hasConsoleErrors && !hasConsoleWarnings && !hasPageErrors) {
+        return '';
+      }
+      
+      let logsHTML = '<div style="margin-top: 15px; background: #f9fafb; padding: 15px; border-radius: 8px; border: 2px solid #e5e7eb;">';
+      logsHTML += '<h4 style="font-size: 14px; color: #374151; margin-bottom: 10px; font-weight: 700;">🔍 Advanced Logging</h4>';
+      
+      // Network Errors
+      if (hasNetworkErrors) {
+        logsHTML += `
+          <div style="background: #fee2e2; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid #ef4444;">
+            <strong style="color: #991b1b;">🔴 Network Errors (${step.networkErrors.length})</strong>
+            <div style="margin-top: 8px;">
+        `;
+        
+        step.networkErrors.forEach(err => {
+          logsHTML += `
+            <div style="background: white; padding: 8px; margin: 5px 0; border-radius: 4px; font-size: 12px;">
+              <div><strong>URL:</strong> <code style="color: #dc2626;">${err.url}</code></div>
+              ${err.status ? `<div><strong>Status:</strong> <span style="color: #dc2626; font-weight: 600;">${err.status} ${err.statusText}</span></div>` : ''}
+              ${err.error ? `<div><strong>Error:</strong> <span style="color: #dc2626;">${err.error}</span></div>` : ''}
+              <div style="color: #6b7280; font-size: 11px; margin-top: 4px;">${new Date(err.timestamp).toLocaleTimeString()}</div>
+            </div>
+          `;
+        });
+        
+        logsHTML += '</div></div>';
+      }
+      
+      // Console Errors
+      if (hasConsoleErrors) {
+        logsHTML += `
+          <div style="background: #fef2f2; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid #f97316;">
+            <strong style="color: #9a3412;">🔴 Console Errors (${step.consoleErrors.length})</strong>
+            <div style="margin-top: 8px;">
+        `;
+        
+        step.consoleErrors.forEach(err => {
+          logsHTML += `
+            <div style="background: white; padding: 8px; margin: 5px 0; border-radius: 4px; font-size: 12px;">
+              <pre style="color: #c2410c; white-space: pre-wrap; margin: 0;">${err.text || err}</pre>
+              ${err.timestamp ? `<div style="color: #6b7280; font-size: 11px; margin-top: 4px;">${new Date(err.timestamp).toLocaleTimeString()}</div>` : ''}
+            </div>
+          `;
+        });
+        
+        logsHTML += '</div></div>';
+      }
+      
+      // Console Warnings
+      if (hasConsoleWarnings) {
+        logsHTML += `
+          <div style="background: #fef3c7; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid #f59e0b;">
+            <strong style="color: #92400e;">🟡 Console Warnings (${step.consoleWarnings.length})</strong>
+            <div style="margin-top: 8px;">
+        `;
+        
+        step.consoleWarnings.forEach(warn => {
+          logsHTML += `
+            <div style="background: white; padding: 8px; margin: 5px 0; border-radius: 4px; font-size: 12px;">
+              <pre style="color: #b45309; white-space: pre-wrap; margin: 0;">${warn.text || warn}</pre>
+              ${warn.timestamp ? `<div style="color: #6b7280; font-size: 11px; margin-top: 4px;">${new Date(warn.timestamp).toLocaleTimeString()}</div>` : ''}
+            </div>
+          `;
+        });
+        
+        logsHTML += '</div></div>';
+      }
+      
+      // Page Errors (crashes)
+      if (hasPageErrors) {
+        logsHTML += `
+          <div style="background: #fee2e2; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid #dc2626;">
+            <strong style="color: #7f1d1d;">💥 Page Errors (${step.pageErrors.length})</strong>
+            <div style="margin-top: 8px;">
+        `;
+        
+        step.pageErrors.forEach(err => {
+          logsHTML += `
+            <div style="background: white; padding: 8px; margin: 5px 0; border-radius: 4px; font-size: 12px;">
+              <div style="color: #991b1b; font-weight: 600; margin-bottom: 4px;">${err.message}</div>
+              ${err.stack ? `<pre style="color: #7f1d1d; font-size: 11px; margin: 0; white-space: pre-wrap;">${err.stack}</pre>` : ''}
+              ${err.timestamp ? `<div style="color: #6b7280; font-size: 11px; margin-top: 4px;">${new Date(err.timestamp).toLocaleTimeString()}</div>` : ''}
+            </div>
+          `;
+        });
+        
+        logsHTML += '</div></div>';
+      }
+      
+      // Network Requests Summary (if there were errors, show all requests)
+      if (hasNetworkErrors && step.networkRequests && step.networkRequests.length > 0) {
+        logsHTML += `
+          <details style="margin-top: 10px;">
+            <summary style="cursor: pointer; font-weight: 600; color: #374151; font-size: 13px;">
+              📊 All Network Requests (${step.networkRequests.length})
+            </summary>
+            <div style="margin-top: 8px; max-height: 200px; overflow-y: auto;">
+        `;
+        
+        step.networkRequests.forEach(req => {
+          logsHTML += `
+            <div style="background: white; padding: 6px; margin: 3px 0; border-radius: 4px; font-size: 11px; border-left: 2px solid #d1d5db;">
+              <span style="color: #6b7280; font-weight: 600;">${req.method}</span>
+              <span style="color: #374151;">${req.url}</span>
+              <span style="color: #9ca3af;">(${req.resourceType})</span>
+            </div>
+          `;
+        });
+        
+        logsHTML += '</div></details>';
+      }
+      
+      logsHTML += '</div>';
+      return logsHTML;
+    }
+    
+    /**
+     * Execute test with steps
+     */
+    async function executeTest() {
+      const input = document.getElementById('stepsInput').value.trim();
+      
+      if (!input) {
+        showError('Please enter test steps JSON');
+        return;
+      }
+      
+      // Parse JSON
+      let steps;
+      try {
+        steps = JSON.parse(input);
+      } catch (error) {
+        showError('Invalid JSON: ' + error.message);
+        return;
+      }
+      
+      if (!Array.isArray(steps) || steps.length === 0) {
+        showError('Steps must be a non-empty array');
+        return;
+      }
+      
+      const btn = document.getElementById('executeBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading"></span>Executing test...';
+      
+      // Hide previous results
+      document.getElementById('resultsContainer').classList.add('hidden');
+      
+      try {
+        const headless = document.getElementById('headlessMode').checked;
+        
+        const response = await fetch('/api/execute', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            steps: steps,
+            options: {
+              headless: headless,
+              continueOnFailure: true
+            }
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success !== undefined) {
+          currentReport = result.report;
+          displayResults(result.report, result.artifactsUrl);
+        } else {
+          showError('Execution failed: ' + result.error);
+        }
+        
+      } catch (error) {
+        showError('Error: ' + error.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🚀 Execute Test';
+      }
+    }
+    
+    /**
+     * Display test results
+     */
+    function displayResults(report, artifactsUrl) {
+      const container = document.getElementById('resultsContainer');
+      const summaryContainer = document.getElementById('summaryContainer');
+      const statusMessage = document.getElementById('statusMessage');
+      const stepsResults = document.getElementById('stepsResults');
+      
+      // Show container
+      container.classList.remove('hidden');
+      
+      // Display summary
+      summaryContainer.innerHTML = `
+        <div class="summary-box">
+          <div class="number">${report.totalSteps}</div>
+          <div class="label">Total Steps</div>
+        </div>
+        <div class="summary-box">
+          <div class="number" style="color: #10b981;">${report.passedSteps}</div>
+          <div class="label">Passed</div>
+        </div>
+        <div class="summary-box">
+          <div class="number" style="color: #ef4444;">${report.failedSteps}</div>
+          <div class="label">Failed</div>
+        </div>
+        <div class="summary-box">
+          <div class="number">${(report.duration / 1000).toFixed(1)}s</div>
+          <div class="label">Duration</div>
+        </div>
+      `;
+      
+      // Display status message
+      if (report.success) {
+        statusMessage.innerHTML = `
+          <div class="alert alert-success">
+            ✅ <strong>Test Passed!</strong> All ${report.totalSteps} steps executed successfully.
+          </div>
+        `;
+      } else {
+        statusMessage.innerHTML = `
+          <div class="alert alert-error">
+            ❌ <strong>Test Failed!</strong> ${report.failedSteps} out of ${report.totalSteps} steps failed.
+          </div>
+        `;
+      }
+      
+      // Display each step result
+      stepsResults.innerHTML = '<h3 style="margin-bottom: 15px;">Step-by-Step Results:</h3>';
+      
+      report.steps.forEach(step => {
+        const stepDiv = document.createElement('div');
+        stepDiv.className = `step-result ${step.status}`;
+        
+        // Build screenshot HTML
+        // WHY: Only show result screenshot (success or failure), not before state
+        let screenshotsHTML = '';
+        if (step.screenshot) {
+          const screenshotLabel = step.status === 'failed' ? '📸 Failure Screenshot' : '📸 Result Screenshot';
+          screenshotsHTML = `
+            <div style="margin: 15px 0;">
+              <div class="screenshot-box">
+                <h4>${screenshotLabel}</h4>
+                <img src="${step.screenshot}" alt="${screenshotLabel}" 
+                     onclick="window.open(this.src, '_blank')"
+                     style="max-width: 100%; border: 2px solid ${step.status === 'failed' ? '#ef4444' : '#10b981'};">
+              </div>
+            </div>
+          `;
+        }
+        
+        // Behavior match indicator
+        const matchIndicator = step.behaviorMatch 
+          ? '<span class="match-indicator match">✓ Match</span>'
+          : '<span class="match-indicator mismatch">✗ Mismatch</span>';
+        
+        stepDiv.innerHTML = `
+          <div class="step-header">
+            <div class="step-title">
+              Step ${step.stepNumber}: ${step.description}
+            </div>
+            <span class="step-status ${step.status}">${step.status.toUpperCase()}</span>
+          </div>
+          
+          <div style="margin-bottom: 10px;">
+            <strong>Action:</strong> <code>${step.action}</code> 
+            ${step.target ? `<strong>Target:</strong> <code>${step.target}</code>` : ''}
+            ${step.data ? `<strong>Data:</strong> <code>${step.data}</code>` : ''}
+          </div>
+          
+          <div class="comparison-grid">
+            <div class="comparison-box expected">
+              <h4>Expected Behavior</h4>
+              <p>${step.expectedBehavior}</p>
+            </div>
+            <div class="comparison-box actual">
+              <h4>Actual Behavior ${matchIndicator}</h4>
+              <p>${step.actualBehavior}</p>
+            </div>
+          </div>
+          
+          ${screenshotsHTML}
+          
+          ${step.error ? `
+            <div style="background: #fef2f2; padding: 12px; border-radius: 6px; margin-top: 10px; border-left: 3px solid #ef4444;">
+              <strong style="color: #991b1b;">❌ Step Error:</strong>
+              <pre style="margin-top: 5px; font-size: 12px; color: #7f1d1d; white-space: pre-wrap;">${step.error}</pre>
+            </div>
+          ` : ''}
+          
+          ${generateAdvancedLogs(step)}
+          
+          <div style="margin-top: 10px; font-size: 12px; color: #6b7280;">
+            Duration: ${step.duration}ms | Page: ${step.pageUrl || 'N/A'}
+          </div>
+        `;
+        
+        stepsResults.appendChild(stepDiv);
+      });
+      
+      // Scroll to results
+      container.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    /**
+     * Show error message
+     */
+    function showError(message) {
+      const statusMessage = document.getElementById('statusMessage');
+      statusMessage.innerHTML = `<div class="alert alert-error">${message}</div>`;
+      document.getElementById('resultsContainer').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
+

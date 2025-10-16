@@ -1,0 +1,23 @@
+{
+  "name": "aiqa-phase4.5-rag",
+  "version": "1.0.0",
+  "description": "AIQA Phase 4.5 - RAG Service with Vector Database",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["rag", "vector-database", "chromadb", "embeddings", "knowledge-retrieval"],
+  "author": "AIQA Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "openai": "^4.20.0",
+    "chromadb": "^1.8.1",
+    "simple-git": "^3.21.0",
+    "dotenv": "^16.3.1"
+  }
+}
+

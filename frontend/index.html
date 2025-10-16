@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIQA - Intent-Based AI Testing Platform</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #f5f5f5;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      opacity: 0.9;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .card h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #1f2937;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 10px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #374151;
+    }
+    
+    input[type="file"] {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      border: 2px dashed #d1d5db;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    input[type="file"]:hover {
+      border-color: #667eea;
+      background: #f9fafb;
+    }
+    
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      resize: vertical;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .btn-secondary {
+      background: #6b7280;
+    }
+    
+    .btn-full {
+      width: 100%;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .status-passed {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .status-failed {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .status-running {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+    
+    .log-container {
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 20px;
+      border-radius: 8px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    
+    .log-entry {
+      margin-bottom: 5px;
+      padding: 4px 0;
+    }
+    
+    .log-info {
+      color: #60a5fa;
+    }
+    
+    .log-success {
+      color: #34d399;
+    }
+    
+    .log-error {
+      color: #f87171;
+    }
+    
+    .log-warn {
+      color: #fbbf24;
+    }
+    
+    .results-container {
+      margin-top: 30px;
+    }
+    
+    .results-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .metric {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .metric-value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #1f2937;
+    }
+    
+    .metric-label {
+      font-size: 12px;
+      color: #6b7280;
+      text-transform: uppercase;
+      margin-top: 5px;
+    }
+    
+    .alert {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .alert-info {
+      background: #dbeafe;
+      color: #1e40af;
+      border-left: 4px solid #3b82f6;
+    }
+    
+    .alert-success {
+      background: #d1fae5;
+      color: #065f46;
+      border-left: 4px solid #10b981;
+    }
+    
+    .alert-error {
+      background: #fee2e2;
+      color: #991b1b;
+      border-left: 4px solid #ef4444;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🤖 AIQA</h1>
+    <p>Intent-Based AI Testing Platform</p>
+  </div>
+  
+  <div class="container">
+    <div class="grid">
+      <!-- Upload Test Case -->
+      <div class="card">
+        <h2>📤 Upload Test Case</h2>
+        <div class="form-group">
+          <label>Select test case file (.txt, .json, .yaml)</label>
+          <input type="file" id="fileInput" accept=".txt,.json,.yaml,.yml">
+        </div>
+        <button class="btn btn-full" onclick="uploadFile()">Upload File</button>
+        <div id="uploadStatus" class="hidden" style="margin-top: 15px;"></div>
+      </div>
+      
+      <!-- Write Intent -->
+      <div class="card">
+        <h2>✍️ Write Test Intent</h2>
+        <div class="form-group">
+          <label>Describe your test in natural language</label>
+          <textarea id="intentInput" placeholder="Example:
+Test login and logout flow
+
+1. Navigate to https://example.com
+2. Click on login button
+3. Enter username: testuser
+4. Enter password: testpass123
+5. Click submit
+6. Verify dashboard is visible
+7. Click logout
+8. Verify returned to login page"></textarea>
+        </div>
+        <button class="btn btn-full" onclick="runTestFromIntent()">Run Test</button>
+      </div>
+    </div>
+    
+    <!-- Live Logs -->
+    <div class="card">
+      <h2>📝 Live Execution Logs</h2>
+      <div class="log-container" id="logContainer">
+        <div class="log-entry log-info">Waiting for test execution...</div>
+      </div>
+      <button class="btn btn-secondary" onclick="clearLogs()" style="margin-top: 15px;">Clear Logs</button>
+    </div>
+    
+    <!-- Results -->
+    <div class="card results-container hidden" id="resultsContainer">
+      <h2>📊 Test Results</h2>
+      <div id="resultsContent"></div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <p>AIQA - Built with AI • Powered by Playwright & GPT</p>
+  </div>
+  
+  <script>
+    let ws;
+    let uploadedFilePath = null;
+    
+    // Connect to WebSocket for live logs
+    function connectWebSocket() {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(`${protocol}//${window.location.host}`);
+      
+      ws.onopen = () => {
+        console.log('WebSocket connected');
+      };
+      
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        addLog(data.type, data.message);
+      };
+      
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+      
+      ws.onclose = () => {
+        console.log('WebSocket disconnected');
+        setTimeout(connectWebSocket, 3000); // Reconnect after 3s
+      };
+    }
+    
+    // Add log entry
+    function addLog(type, message) {
+      const logContainer = document.getElementById('logContainer');
+      const entry = document.createElement('div');
+      entry.className = `log-entry log-${type}`;
+      
+      const timestamp = new Date().toLocaleTimeString();
+      entry.textContent = `[${timestamp}] ${message}`;
+      
+      logContainer.appendChild(entry);
+      logContainer.scrollTop = logContainer.scrollHeight;
+    }
+    
+    // Clear logs
+    function clearLogs() {
+      document.getElementById('logContainer').innerHTML = 
+        '<div class="log-entry log-info">Logs cleared</div>';
+    }
+    
+    // Upload file
+    async function uploadFile() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        alert('Please select a file');
+        return;
+      }
+      
+      const formData = new FormData();
+      formData.append('testcase', file);
+      
+      const statusDiv = document.getElementById('uploadStatus');
+      statusDiv.className = 'alert alert-info';
+      statusDiv.textContent = 'Uploading...';
+      statusDiv.classList.remove('hidden');
+      
+      try {
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          uploadedFilePath = result.path;
+          statusDiv.className = 'alert alert-success';
+          statusDiv.textContent = `✅ File uploaded: ${result.filename}`;
+          
+          // Ask if they want to run it
+          if (confirm('File uploaded successfully! Run this test now?')) {
+            runTestFromFile(result.path);
+          }
+        } else {
+          statusDiv.className = 'alert alert-error';
+          statusDiv.textContent = `❌ Upload failed: ${result.error}`;
+        }
+      } catch (error) {
+        statusDiv.className = 'alert alert-error';
+        statusDiv.textContent = `❌ Error: ${error.message}`;
+      }
+    }
+    
+    // Run test from uploaded file
+    async function runTestFromFile(filepath) {
+      clearLogs();
+      addLog('info', '🚀 Starting test execution from file...');
+      hideResults();
+      
+      try {
+        const response = await fetch('/api/run-test', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filepath })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showResults(result.results);
+        } else {
+          addLog('error', `❌ Test failed: ${result.error}`);
+        }
+      } catch (error) {
+        addLog('error', `❌ Error: ${error.message}`);
+      }
+    }
+    
+    // Run test from intent text
+    async function runTestFromIntent() {
+      const intent = document.getElementById('intentInput').value.trim();
+      
+      if (!intent) {
+        alert('Please enter a test intent');
+        return;
+      }
+      
+      clearLogs();
+      addLog('info', '🚀 Starting test execution from intent...');
+      hideResults();
+      
+      try {
+        const response = await fetch('/api/run-test', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ intent })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showResults(result.results);
+        } else if (result.needsClarification) {
+          addLog('warn', `⚠️ Need clarification: ${result.clarificationQuestion}`);
+          alert(`Need more details:\n\n${result.clarificationQuestion}`);
+        } else {
+          addLog('error', `❌ Test failed: ${result.error}`);
+        }
+      } catch (error) {
+        addLog('error', `❌ Error: ${error.message}`);
+      }
+    }
+    
+    // Show results
+    function showResults(results) {
+      const container = document.getElementById('resultsContainer');
+      const content = document.getElementById('resultsContent');
+      
+      const statusClass = results.status === 'passed' ? 'status-passed' : 'status-failed';
+      const statusIcon = results.status === 'passed' ? '✅' : '❌';
+      
+      content.innerHTML = `
+        <div class="alert ${results.status === 'passed' ? 'alert-success' : 'alert-error'}">
+          ${statusIcon} Test ${results.status.toUpperCase()}: ${results.testName}
+        </div>
+        
+        <div class="results-summary">
+          <div class="metric">
+            <div class="metric-value"><span class="${statusClass}">${results.status.toUpperCase()}</span></div>
+            <div class="metric-label">Status</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value">${results.totalSteps}</div>
+            <div class="metric-label">Total Steps</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value" style="color: #10b981;">${results.passedSteps}</div>
+            <div class="metric-label">Passed</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value" style="color: #ef4444;">${results.failedSteps}</div>
+            <div class="metric-label">Failed</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value" style="font-size: 20px;">${formatDuration(results.duration)}</div>
+            <div class="metric-label">Duration</div>
+          </div>
+        </div>
+        
+        <p><strong>Test ID:</strong> <code>${results.testId}</code></p>
+        <p><strong>Completed:</strong> ${new Date(results.completedAt).toLocaleString()}</p>
+        
+        ${results.error ? `
+          <div class="alert alert-error" style="margin-top: 15px;">
+            <strong>Error:</strong> ${results.error}
+          </div>
+        ` : ''}
+        
+        <button class="btn" onclick="window.open('/reports/report_${results.testId}.html', '_blank')" style="margin-top: 20px;">
+          📊 View Full Report
+        </button>
+      `;
+      
+      container.classList.remove('hidden');
+    }
+    
+    // Hide results
+    function hideResults() {
+      document.getElementById('resultsContainer').classList.add('hidden');
+    }
+    
+    // Format duration
+    function formatDuration(ms) {
+      if (ms < 1000) return `${ms}ms`;
+      const seconds = Math.floor(ms / 1000);
+      const minutes = Math.floor(seconds / 60);
+      if (minutes > 0) {
+        return `${minutes}m ${seconds % 60}s`;
+      }
+      return `${seconds}s`;
+    }
+    
+    // Initialize
+    connectWebSocket();
+  </script>
+</body>
+</html>
+

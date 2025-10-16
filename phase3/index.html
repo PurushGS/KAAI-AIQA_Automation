@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 3: AI Web Reader</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container { max-width: 1200px; margin: 0 auto; }
+    
+    .header {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .header h1 { font-size: 28px; color: #1f2937; margin-bottom: 10px; }
+    
+    .phase-badge {
+      display: inline-block;
+      background: #8b5cf6;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .header p { margin-top: 10px; color: #6b7280; }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .card h2 {
+      font-size: 20px;
+      color: #1f2937;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .form-group { margin-bottom: 20px; }
+    
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+    
+    .hint {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      background: #8b5cf6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn:hover {
+      background: #7c3aed;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
+    }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #8b5cf6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .result {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    
+    .result.success {
+      background: #d1fae5;
+      border-left: 4px solid #10b981;
+    }
+    
+    .result.error {
+      background: #fee2e2;
+      border-left: 4px solid #ef4444;
+    }
+    
+    .result-item {
+      margin: 10px 0;
+      padding: 10px;
+      background: white;
+      border-radius: 6px;
+    }
+    
+    .result-item strong {
+      color: #374151;
+      display: inline-block;
+      min-width: 120px;
+    }
+    
+    .result-item code {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #8b5cf6;
+    }
+    
+    .confidence-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .confidence-high {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .confidence-medium {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .confidence-low {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .examples {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    
+    .examples h3 {
+      font-size: 14px;
+      color: #374151;
+      margin-bottom: 10px;
+    }
+    
+    .examples ul {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .examples li {
+      padding: 8px 0;
+      color: #6b7280;
+      font-size: 13px;
+    }
+    
+    .examples li:before {
+      content: "✓ ";
+      color: #10b981;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span class="phase-badge">PHASE 3</span>
+      <h1>🔍 AI Web Reader (Nanobrowser-Style)</h1>
+      <p>Find elements using natural language - no more brittle CSS selectors!</p>
+    </div>
+    
+    <div class="card">
+      <h2>🎯 Test AI Element Finding</h2>
+      
+      <div class="form-group">
+        <label for="url">Website URL</label>
+        <input type="url" id="url" placeholder="https://example.com" value="https://www.google.com">
+        <div class="hint">The page where you want to find an element</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="description">Element Description (Natural Language)</label>
+        <input type="text" id="description" placeholder="the login button" value="the search box">
+        <div class="hint">Describe the element in natural language - "the submit button", "email input field", etc.</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="action">Action Type</label>
+        <select id="action">
+          <option value="click">click - Click an element</option>
+          <option value="type" selected>type - Type in an input field</option>
+          <option value="verify">verify - Verify element exists</option>
+        </select>
+        <div class="hint">What you want to do with the element</div>
+      </div>
+      
+      <button class="btn" onclick="findElement()" id="findBtn">
+        🔍 Find Element
+      </button>
+      
+      <div class="examples">
+        <h3>💡 Example Descriptions:</h3>
+        <ul>
+          <li>"the login button" - Finds login button by text/purpose</li>
+          <li>"email input field" - Finds email input</li>
+          <li>"search box" - Finds search input</li>
+          <li>"submit button in the form" - Context-aware finding</li>
+          <li>"the main navigation menu" - Understands page structure</li>
+        </ul>
+      </div>
+      
+      <div id="resultContainer"></div>
+    </div>
+    
+    <div class="card">
+      <h2>🎓 How It Works</h2>
+      <p style="margin-bottom: 15px; color: #6b7280; line-height: 1.6;">
+        Phase 3 uses multiple strategies to find elements intelligently:
+      </p>
+      <ol style="color: #6b7280; line-height: 1.8; padding-left: 20px;">
+        <li><strong>Text Match:</strong> Finds by visible text (fast)</li>
+        <li><strong>Aria Labels:</strong> Uses accessibility attributes</li>
+        <li><strong>Placeholders:</strong> Matches input placeholders</li>
+        <li><strong>Roles:</strong> Understands button, link, input roles</li>
+        <li><strong>AI Understanding:</strong> Uses GPT-4 to understand context</li>
+        <li><strong>Robust Selectors:</strong> Generates stable selectors</li>
+      </ol>
+    </div>
+  </div>
+  
+  <script>
+    async function findElement() {
+      const url = document.getElementById('url').value.trim();
+      const description = document.getElementById('description').value.trim();
+      const action = document.getElementById('action').value;
+      
+      if (!url || !description) {
+        showResult({
+          success: false,
+          error: 'Please enter both URL and element description'
+        });
+        return;
+      }
+      
+      const btn = document.getElementById('findBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading"></span>Finding element...';
+      
+      try {
+        const response = await fetch('/api/find-element', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url, description, action })
+        });
+        
+        const result = await response.json();
+        showResult(result);
+        
+      } catch (error) {
+        showResult({
+          success: false,
+          error: error.message
+        });
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🔍 Find Element';
+      }
+    }
+    
+    function showResult(result) {
+      const container = document.getElementById('resultContainer');
+      
+      if (result.success) {
+        const confidenceClass = `confidence-${result.confidence}`;
+        container.innerHTML = `
+          <div class="result success">
+            <h3 style="color: #065f46; margin-bottom: 15px;">✅ Element Found!</h3>
+            
+            <div class="result-item">
+              <strong>Selector:</strong>
+              <code>${result.selector}</code>
+            </div>
+            
+            <div class="result-item">
+              <strong>Strategy:</strong>
+              ${result.strategy}
+            </div>
+            
+            <div class="result-item">
+              <strong>Confidence:</strong>
+              <span class="confidence-badge ${confidenceClass}">${result.confidence.toUpperCase()}</span>
+            </div>
+            
+            <div class="result-item">
+              <strong>Description:</strong>
+              ${result.description}
+            </div>
+            
+            ${result.element ? `
+              <div class="result-item">
+                <strong>Element Details:</strong>
+                <pre style="background: #f3f4f6; padding: 10px; border-radius: 6px; margin-top: 8px; font-size: 12px; overflow-x: auto;">${JSON.stringify(result.element, null, 2)}</pre>
+              </div>
+            ` : ''}
+            
+            <div style="margin-top: 15px; padding: 12px; background: white; border-radius: 6px;">
+              <strong style="color: #059669;">🎉 Ready for Phase 2!</strong><br>
+              <span style="font-size: 13px; color: #6b7280;">This selector can now be used in Phase 2 for test execution.</span>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="result error">
+            <h3 style="color: #991b1b; margin-bottom: 10px;">❌ Error</h3>
+            <p style="color: #7f1d1d;">${result.error}</p>
+          </div>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,145 @@
+{
+  "id": "07449920-a88d-4e1d-a1e2-0a2db8ea49de",
+  "name": "Create a login test case for login flow, goto u...",
+  "intent": "Create a login test case for login flow, goto url https://app.getmulti.ai/, click on login button, enter email as \"purushothama@growthchool.io\", enter password \"Testing123\", click on login with email button, verify login successful.",
+  "createdAt": "2025-10-14T07:06:29.905Z",
+  "status": "pending",
+  "config": {
+    "browser": "chromium",
+    "timeout": 30000,
+    "retries": 2,
+    "screenshotOnFailure": true,
+    "videoOnFailure": true
+  },
+  "steps": [
+    {
+      "id": "step_1_acfd173c",
+      "stepNumber": 1,
+      "description": "Navigate to the Multi AI app URL",
+      "action": "navigate",
+      "target": "https://app.getmulti.ai/",
+      "data": null,
+      "assertion": null,
+      "timeout": 30000,
+      "retries": 2,
+      "optional": false,
+      "status": "pending",
+      "screenshots": [],
+      "logs": [],
+      "timing": {
+        "started": null,
+        "completed": null,
+        "duration": null
+      }
+    },
+    {
+      "id": "step_2_d397b075",
+      "stepNumber": 2,
+      "description": "Click on the login button",
+      "action": "click",
+      "target": "button.login",
+      "data": null,
+      "assertion": null,
+      "timeout": 5000,
+      "retries": 2,
+      "optional": false,
+      "status": "pending",
+      "screenshots": [],
+      "logs": [],
+      "timing": {
+        "started": null,
+        "completed": null,
+        "duration": null
+      }
+    },
+    {
+      "id": "step_3_aa5148fa",
+      "stepNumber": 3,
+      "description": "Enter email address",
+      "action": "type",
+      "target": "input#email",
+      "data": "purushothama@growthchool.io",
+      "assertion": null,
+      "timeout": 5000,
+      "retries": 2,
+      "optional": false,
+      "status": "pending",
+      "screenshots": [],
+      "logs": [],
+      "timing": {
+        "started": null,
+        "completed": null,
+        "duration": null
+      }
+    },
+    {
+      "id": "step_4_f8147fa1",
+      "stepNumber": 4,
+      "description": "Enter password",
+      "action": "type",
+      "target": "input#password",
+      "data": "Testing123",
+      "assertion": null,
+      "timeout": 5000,
+      "retries": 2,
+      "optional": false,
+      "status": "pending",
+      "screenshots": [],
+      "logs": [],
+      "timing": {
+        "started": null,
+        "completed": null,
+        "duration": null
+      }
+    },
+    {
+      "id": "step_5_d253081d",
+      "stepNumber": 5,
+      "description": "Click on the login with email button",
+      "action": "click",
+      "target": "button#loginWithEmail",
+      "data": null,
+      "assertion": null,
+      "timeout": 5000,
+      "retries": 2,
+      "optional": false,
+      "status": "pending",
+      "screenshots": [],
+      "logs": [],
+      "timing": {
+        "started": null,
+        "completed": null,
+        "duration": null
+      }
+    },
+    {
+      "id": "step_6_09774e01",
+      "stepNumber": 6,
+      "description": "Verify login was successful",
+      "action": "verify",
+      "target": "div.loginSuccess",
+      "data": null,
+      "assertion": "element is visible",
+      "timeout": 10000,
+      "retries": 3,
+      "optional": false,
+      "status": "pending",
+      "screenshots": [],
+      "logs": [],
+      "timing": {
+        "started": null,
+        "completed": null,
+        "duration": null
+      }
+    }
+  ],
+  "metadata": {
+    "totalSteps": 6,
+    "estimatedDuration": 11,
+    "parsedBy": {
+      "parsedAt": "2025-10-14T07:06:29.905Z",
+      "model": "gpt-4-turbo-preview",
+      "provider": "openai"
+    }
+  }
+}

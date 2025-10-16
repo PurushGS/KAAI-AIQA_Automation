@@ -1,0 +1,14 @@
+# Git Attributes for AIQA Project
+# Author: Purushothama Raju
+# Date: 12/10/2025
+
+# Ensure consistent line endings
+* text=auto
+
+# Preserve author information in specific files
+*.js linguist-language=JavaScript
+*.html linguist-language=HTML
+
+# Mark these files as requiring careful review
+package.json merge=ours
+

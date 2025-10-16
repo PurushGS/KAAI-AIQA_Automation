@@ -1,0 +1,23 @@
+{
+  "name": "aiqa-phase5-self-improving",
+  "version": "1.0.0",
+  "description": "AIQA Phase 5 - Self-Improving Code with ML-based Auto-fixes",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["self-improving", "auto-fix", "ml", "code-generation", "aiqa"],
+  "author": "AIQA Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "openai": "^4.20.0",
+    "dotenv": "^16.3.1",
+    "diff": "^5.1.0",
+    "prettier": "^3.1.0"
+  }
+}
+

@@ -1,0 +1,10 @@
+# Ignore these from Cursor AI indexing
+node_modules/
+logs/
+reports/
+artifacts/
+plans/
+.git/
+test-results/
+playwright-report/
+
