@@ -32,9 +32,24 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import multer from 'multer';
+import CSVTestSuiteHandler from './csvTestSuiteHandler.js';
+import CloudIntegrationsManager from './cloudIntegrations.js';
+import AutomatedTestTrigger from './automatedTestTrigger.js';
 
 // Load environment variables
 dotenv.config({ path: '../.env' });
+
+// Initialize new modules
+const csvHandler = new CSVTestSuiteHandler();
+const cloudIntegrations = new CloudIntegrationsManager();
+const testTriggers = new AutomatedTestTrigger();
+
+// Configure multer for file uploads
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
 
 const app = express();
 const PORT = 3007;
@@ -789,6 +804,240 @@ app.get('/api/suites/tag/:tag', async (req, res) => {
   }
 });
 
+// ==================== CSV UPLOAD & TEST SUITE IMPORT ====================
+
+// Upload CSV file and convert to test suite
+app.post('/api/csv/upload', upload.single('csvFile'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'No file uploaded' });
+    }
+
+    const csvContent = req.file.buffer.toString('utf-8');
+    const filename = req.file.originalname;
+
+    const result = await csvHandler.processUploadedCSV(csvContent, filename);
+
+    res.json({ 
+      success: true, 
+      message: 'CSV processed successfully',
+      ...result 
+    });
+  } catch (error) {
+    console.error('CSV upload error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ==================== CLOUD INTEGRATIONS ====================
+
+// Initialize cloud integrations
+(async () => {
+  await cloudIntegrations.initialize();
+  await testTriggers.initialize();
+})();
+
+// Add/Update cloud integration
+app.post('/api/integrations/:provider', async (req, res) => {
+  try {
+    const { provider } = req.params;
+    const result = await cloudIntegrations.addIntegration(provider, req.body);
+    res.json({ success: true, ...result });
+  } catch (error) {
+    console.error('Integration error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Test cloud connection
+app.post('/api/integrations/:provider/test', async (req, res) => {
+  try {
+    const { provider } = req.params;
+    const result = await cloudIntegrations.testConnection(provider, req.body);
+    res.json(result);
+  } catch (error) {
+    console.error('Connection test error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// List all integrations
+app.get('/api/integrations', async (req, res) => {
+  try {
+    const integrations = await cloudIntegrations.listIntegrations();
+    res.json({ success: true, integrations });
+  } catch (error) {
+    console.error('List integrations error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Get specific integration
+app.get('/api/integrations/:provider', async (req, res) => {
+  try {
+    const { provider } = req.params;
+    const integration = await cloudIntegrations.getIntegration(provider);
+    res.json({ success: true, integration });
+  } catch (error) {
+    console.error('Get integration error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Delete integration
+app.delete('/api/integrations/:provider', async (req, res) => {
+  try {
+    const { provider } = req.params;
+    const result = await cloudIntegrations.deleteIntegration(provider);
+    res.json({ success: true, ...result });
+  } catch (error) {
+    console.error('Delete integration error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ==================== WEBHOOKS ====================
+
+// Generic webhook endpoint for all providers
+app.post('/api/webhooks/:provider', async (req, res) => {
+  try {
+    const { provider } = req.params;
+    console.log(`\n📥 Webhook received from ${provider}`);
+
+    // Handle webhook from cloud provider
+    const webhookResult = await cloudIntegrations.handleWebhook(
+      provider, 
+      req.body, 
+      req.headers
+    );
+
+    // Check if we should trigger test execution
+    if (webhookResult.triggerRegression) {
+      console.log('🎯 Triggering automated test execution...');
+
+      // Find matching triggers
+      const triggers = await testTriggers.listTriggers({ 
+        enabled: true, 
+        triggerType: 'push' 
+      });
+
+      for (const trigger of triggers) {
+        const shouldTrigger = await testTriggers.shouldTrigger(trigger, webhookResult.event);
+        
+        if (shouldTrigger.shouldTrigger) {
+          console.log(`   ✅ Trigger matches: ${trigger.name}`);
+          
+          // Execute trigger asynchronously
+          testTriggers.executeTrigger(trigger, {
+            ...webhookResult.event,
+            reason: shouldTrigger.reason
+          }).catch(err => console.error('Trigger execution error:', err));
+        }
+      }
+    }
+
+    res.json({ 
+      success: true, 
+      message: 'Webhook processed',
+      triggered: webhookResult.triggerRegression 
+    });
+
+  } catch (error) {
+    console.error('Webhook error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ==================== AUTOMATED TEST TRIGGERS ====================
+
+// Create new trigger
+app.post('/api/triggers', async (req, res) => {
+  try {
+    const trigger = await testTriggers.createTrigger(req.body);
+    res.json({ success: true, trigger });
+  } catch (error) {
+    console.error('Create trigger error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// List all triggers
+app.get('/api/triggers', async (req, res) => {
+  try {
+    const triggers = await testTriggers.listTriggers(req.query);
+    res.json({ success: true, triggers });
+  } catch (error) {
+    console.error('List triggers error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Get specific trigger
+app.get('/api/triggers/:triggerId', async (req, res) => {
+  try {
+    const { triggerId } = req.params;
+    const trigger = await testTriggers.getTrigger(triggerId);
+    res.json({ success: true, trigger });
+  } catch (error) {
+    console.error('Get trigger error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Update trigger
+app.put('/api/triggers/:triggerId', async (req, res) => {
+  try {
+    const { triggerId } = req.params;
+    const trigger = await testTriggers.updateTrigger(triggerId, req.body);
+    res.json({ success: true, trigger });
+  } catch (error) {
+    console.error('Update trigger error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Delete trigger
+app.delete('/api/triggers/:triggerId', async (req, res) => {
+  try {
+    const { triggerId } = req.params;
+    const result = await testTriggers.deleteTrigger(triggerId);
+    res.json({ success: true, ...result });
+  } catch (error) {
+    console.error('Delete trigger error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Manual trigger execution
+app.post('/api/triggers/:triggerId/execute', async (req, res) => {
+  try {
+    const { triggerId } = req.params;
+    const trigger = await testTriggers.getTrigger(triggerId);
+    
+    const execution = await testTriggers.executeTrigger(trigger, {
+      type: 'manual',
+      reason: 'Manual execution',
+      triggeredBy: req.body.userId || 'anonymous'
+    });
+
+    res.json({ success: true, execution });
+  } catch (error) {
+    console.error('Execute trigger error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Get execution history
+app.get('/api/triggers/executions/history', async (req, res) => {
+  try {
+    const history = await testTriggers.getExecutionHistory(req.query);
+    res.json({ success: true, history });
+  } catch (error) {
+    console.error('Get execution history error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // ==================== HEALTH CHECK ====================
 
 app.get('/health', (req, res) => {
@@ -823,6 +1072,10 @@ app.listen(PORT, () => {
   console.log('║   GET  /api/dashboard/stats              - Aggregated stats   ║');
   console.log('║   GET  /api/dashboard/recent-tests       - Recent tests       ║');
   console.log('║   GET  /api/services/health              - Service health     ║');
+  console.log('║   POST /api/csv/upload                   - CSV test import    ║');
+  console.log('║   POST /api/integrations/:provider       - Cloud integration  ║');
+  console.log('║   POST /api/triggers                     - Auto test triggers ║');
+  console.log('║   POST /api/webhooks/:provider           - Webhook handler    ║');
   console.log('║   *    /api/phase[1-5]/*                 - Proxy to phases    ║');
   console.log('║   GET  /health                            - Health check      ║');
   console.log('║                                                                ║');
