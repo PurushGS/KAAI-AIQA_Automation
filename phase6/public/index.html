@@ -608,6 +608,18 @@
                         <span class="nav-icon">📁</span>
                         <span>Test Suites</span>
                     </div>
+                    <div class="nav-item" onclick="showSection('csv-import')">
+                        <span class="nav-icon">📊</span>
+                        <span>CSV Import</span>
+                    </div>
+                    <div class="nav-item" onclick="showSection('integrations')">
+                        <span class="nav-icon">☁️</span>
+                        <span>Cloud Integrations</span>
+                    </div>
+                    <div class="nav-item" onclick="showSection('triggers')">
+                        <span class="nav-icon">🎯</span>
+                        <span>Auto Triggers</span>
+                    </div>
                     <div class="nav-item" onclick="showSection('knowledge')">
                         <span class="nav-icon">🧠</span>
                         <span>Knowledge Base</span>
@@ -820,6 +832,139 @@
                     </button>
 
                     <div id="knowledgeResults" style="margin-top: 24px;"></div>
+                </div>
+
+                <!-- CSV Import Section -->
+                <div id="csv-import" class="content-section">
+                    <div class="section-header">
+                        <h2>📊 CSV Test Suite Import</h2>
+                        <p>Upload CSV files to bulk import test cases</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>📁 Upload CSV File</h3>
+                        <p style="color: var(--text-light); margin-bottom: 20px;">
+                            Upload a CSV file containing your test cases. Each row will become a separate test case.
+                        </p>
+
+                        <div style="background: var(--light); padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+                            <h4 style="margin-bottom: 12px;">📋 CSV Format:</h4>
+                            <pre style="background: white; padding: 12px; border-radius: 4px; overflow-x: auto; font-size: 12px;">test_name, test_description, test_steps, url, expected_result
+Login Test, Test user login, "1. Navigate to login page
+2. Enter username
+3. Click submit", https://example.com, User logged in
+Search Test, Test search, "Type in search
+Click search button", https://example.com, Results shown</pre>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Select CSV File:</label>
+                            <input type="file" id="csvFileInput" accept=".csv" style="padding: 12px; border: 2px dashed var(--border); border-radius: 8px; width: 100%; cursor: pointer;">
+                        </div>
+
+                        <button class="btn-primary" style="width: 100%;" onclick="uploadCSV()">
+                            📤 Upload & Process CSV
+                        </button>
+
+                        <div id="csvUploadResult" style="margin-top: 20px;"></div>
+                    </div>
+                </div>
+
+                <!-- Cloud Integrations Section -->
+                <div id="integrations" class="content-section">
+                    <div class="section-header">
+                        <h2>☁️ Cloud Integrations</h2>
+                        <p>Connect to GitHub, GitLab, Azure DevOps, AWS, and more</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>🔗 Available Integrations</h3>
+                        <div id="integrationsStatus" style="margin-top: 16px;">Loading...</div>
+                    </div>
+
+                    <div class="card" style="margin-top: 24px;">
+                        <h3>⚙️ Configure Integration</h3>
+                        
+                        <div class="form-group">
+                            <label>Cloud Provider:</label>
+                            <select id="cloudProvider" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;" onchange="updateIntegrationForm()">
+                                <option value="">-- Select Provider --</option>
+                                <option value="github">GitHub</option>
+                                <option value="gitlab">GitLab</option>
+                                <option value="azure">Azure DevOps</option>
+                                <option value="aws">AWS</option>
+                                <option value="bitbucket">Bitbucket</option>
+                            </select>
+                        </div>
+
+                        <div id="integrationFormFields"></div>
+
+                        <button class="btn-primary" style="width: 100%; margin-top: 16px;" onclick="saveIntegration()">
+                            💾 Save Integration
+                        </button>
+
+                        <div id="integrationResult" style="margin-top: 20px;"></div>
+                    </div>
+                </div>
+
+                <!-- Automated Triggers Section -->
+                <div id="triggers" class="content-section">
+                    <div class="section-header">
+                        <h2>🎯 Automated Test Triggers</h2>
+                        <p>Configure test suites to run automatically on code push, schedule, or webhooks</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>📋 Existing Triggers</h3>
+                        <div id="triggersList" style="margin-top: 16px;">Loading...</div>
+                    </div>
+
+                    <div class="card" style="margin-top: 24px;">
+                        <h3>➕ Create New Trigger</h3>
+                        
+                        <div class="form-group">
+                            <label>Trigger Name:</label>
+                            <input type="text" id="triggerName" placeholder="e.g., Main Branch Tests" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Trigger Type:</label>
+                            <select id="triggerType" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;" onchange="updateTriggerForm()">
+                                <option value="push">Code Push</option>
+                                <option value="schedule">Scheduled</option>
+                                <option value="webhook">Webhook</option>
+                                <option value="manual">Manual</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Test Suite IDs (comma-separated):</label>
+                            <input type="text" id="triggerTestSuites" placeholder="suite_123, suite_456" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                        </div>
+
+                        <div id="triggerConditionsForm">
+                            <div class="form-group">
+                                <label>Cloud Provider:</label>
+                                <select id="triggerProvider" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                                    <option value="github">GitHub</option>
+                                    <option value="gitlab">GitLab</option>
+                                    <option value="azure">Azure DevOps</option>
+                                    <option value="aws">AWS</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Branch Filters (comma-separated):</label>
+                                <input type="text" id="triggerBranches" placeholder="main, master, develop" value="main, master" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" style="width: 100%; margin-top: 16px;" onclick="createTrigger()">
+                            🚀 Create Trigger
+                        </button>
+
+                        <div id="triggerResult" style="margin-top: 20px;"></div>
+                    </div>
                 </div>
 
                 <!-- Services Section -->
@@ -2608,6 +2753,382 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
+        // ============ NEW FEATURES: CSV Import, Cloud Integrations, Triggers ============
+
+        // CSV Upload Function
+        async function uploadCSV() {
+            const fileInput = document.getElementById('csvFileInput');
+            const resultDiv = document.getElementById('csvUploadResult');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                resultDiv.innerHTML = '<div class="alert alert-error">❌ Please select a CSV file</div>';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('csvFile', fileInput.files[0]);
+
+            resultDiv.innerHTML = '<div class="alert alert-info">⏳ Uploading and processing CSV...</div>';
+
+            try {
+                const response = await fetch('/api/csv/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            ✅ CSV processed successfully!<br>
+                            <strong>Test Suite:</strong> ${data.testSuiteName}<br>
+                            <strong>Total Test Cases:</strong> ${data.totalTestCases}<br>
+                            <strong>Suite ID:</strong> <code>${data.testSuiteId}</code>
+                        </div>
+                        <div class="card" style="margin-top: 16px;">
+                            <h4>📋 Imported Test Cases:</h4>
+                            <ul style="margin-top: 12px;">
+                                ${data.testCases.map(tc => `
+                                    <li><strong>${tc.name}</strong> - ${tc.steps} steps</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `;
+                    fileInput.value = '';
+                } else {
+                    resultDiv.innerHTML = `<div class="alert alert-error">❌ ${data.error || 'Upload failed'}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="alert alert-error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        // Load Integrations Status
+        async function loadIntegrations() {
+            const statusDiv = document.getElementById('integrationsStatus');
+            
+            try {
+                const response = await fetch('/api/integrations');
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusDiv.innerHTML = data.integrations.map(int => `
+                        <div class="card" style="padding: 16px; margin-bottom: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h4>${int.name}</h4>
+                                    <p style="color: var(--text-light); margin-top: 4px;">
+                                        Status: ${int.isConfigured ? '✅ Configured' : '⚪ Not Configured'}
+                                    </p>
+                                    ${int.webhookUrl ? `<p style="color: var(--text-light); font-size: 12px; margin-top: 4px;">Webhook: <code>${int.webhookUrl}</code></p>` : ''}
+                                </div>
+                                <div>
+                                    ${int.isConfigured ? '<button class="btn btn-secondary" onclick="deleteIntegration(\'' + int.provider + '\')">🗑️ Remove</button>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="alert alert-error">❌ Error loading integrations</div>`;
+            }
+        }
+
+        // Update Integration Form based on provider
+        function updateIntegrationForm() {
+            const provider = document.getElementById('cloudProvider').value;
+            const formDiv = document.getElementById('integrationFormFields');
+            
+            if (!provider) {
+                formDiv.innerHTML = '';
+                return;
+            }
+
+            const forms = {
+                github: `
+                    <div class="form-group">
+                        <label>Personal Access Token:</label>
+                        <input type="password" id="int_token" placeholder="ghp_..." style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Repository:</label>
+                        <input type="text" id="int_repository" placeholder="username/repo" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Owner:</label>
+                        <input type="text" id="int_owner" placeholder="username or organization" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                    </div>
+                `,
+                gitlab: `
+                    <div class="form-group">
+                        <label>Private Token:</label>
+                        <input type="password" id="int_token" placeholder="glpat-..." style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>GitLab URL:</label>
+                        <input type="text" id="int_url" placeholder="https://gitlab.com" value="https://gitlab.com" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Project ID:</label>
+                        <input type="text" id="int_projectId" placeholder="12345" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                    </div>
+                `,
+                azure: `
+                    <div class="form-group">
+                        <label>Personal Access Token:</label>
+                        <input type="password" id="int_token" placeholder="PAT" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Organization:</label>
+                        <input type="text" id="int_organization" placeholder="your-org" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Project:</label>
+                        <input type="text" id="int_project" placeholder="your-project" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                    </div>
+                `,
+                aws: `
+                    <div class="form-group">
+                        <label>Access Key ID:</label>
+                        <input type="text" id="int_accessKeyId" placeholder="AKIA..." style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Secret Access Key:</label>
+                        <input type="password" id="int_secretAccessKey" placeholder="Secret key" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Region:</label>
+                        <input type="text" id="int_region" placeholder="us-east-1" value="us-east-1" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Repository:</label>
+                        <input type="text" id="int_repository" placeholder="my-repo" style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; width: 100%;">
+                    </div>
+                `
+            };
+
+            formDiv.innerHTML = forms[provider] || '<p>Select a provider above</p>';
+        }
+
+        // Save Integration
+        async function saveIntegration() {
+            const provider = document.getElementById('cloudProvider').value;
+            const resultDiv = document.getElementById('integrationResult');
+            
+            if (!provider) {
+                resultDiv.innerHTML = '<div class="alert alert-error">❌ Please select a provider</div>';
+                return;
+            }
+
+            // Gather form data
+            const config = { name: `${provider} Integration` };
+            const inputs = document.querySelectorAll('#integrationFormFields input');
+            inputs.forEach(input => {
+                const key = input.id.replace('int_', '');
+                config[key] = input.value;
+            });
+
+            resultDiv.innerHTML = '<div class="alert alert-info">⏳ Saving integration...</div>';
+
+            try {
+                const response = await fetch(`/api/integrations/${provider}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            ✅ Integration saved successfully!<br>
+                            <strong>Webhook URL:</strong> <code>${data.webhookUrl}</code>
+                        </div>
+                    `;
+                    loadIntegrations();
+                } else {
+                    resultDiv.innerHTML = `<div class="alert alert-error">❌ ${data.error || 'Save failed'}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="alert alert-error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        // Load Triggers
+        async function loadTriggers() {
+            const listDiv = document.getElementById('triggersList');
+            
+            try {
+                const response = await fetch('/api/triggers');
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.triggers.length === 0) {
+                        listDiv.innerHTML = '<p style="color: var(--text-light);">No triggers configured yet</p>';
+                    } else {
+                        listDiv.innerHTML = data.triggers.map(trigger => `
+                            <div class="card" style="padding: 16px; margin-bottom: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h4>${trigger.name}</h4>
+                                        <p style="color: var(--text-light); margin-top: 4px;">
+                                            Type: ${trigger.triggerType} | 
+                                            Suites: ${trigger.testSuiteIds.length} | 
+                                            Status: ${trigger.enabled ? '✅ Enabled' : '⚪ Disabled'}
+                                        </p>
+                                        <p style="color: var(--text-light); font-size: 12px; margin-top: 4px;">
+                                            Runs: ${trigger.stats.totalRuns} (✅ ${trigger.stats.successfulRuns} | ❌ ${trigger.stats.failedRuns})
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-primary" onclick="executeTrigger('${trigger.id}')">▶️ Run</button>
+                                        <button class="btn btn-secondary" onclick="deleteTrigger('${trigger.id}')">🗑️ Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (error) {
+                listDiv.innerHTML = `<div class="alert alert-error">❌ Error loading triggers</div>`;
+            }
+        }
+
+        // Create Trigger
+        async function createTrigger() {
+            const name = document.getElementById('triggerName').value;
+            const type = document.getElementById('triggerType').value;
+            const suites = document.getElementById('triggerTestSuites').value;
+            const resultDiv = document.getElementById('triggerResult');
+            
+            if (!name || !suites) {
+                resultDiv.innerHTML = '<div class="alert alert-error">❌ Please fill in all fields</div>';
+                return;
+            }
+
+            const testSuiteIds = suites.split(',').map(s => s.trim());
+            
+            const triggerConfig = {
+                name: name,
+                enabled: true,
+                testSuiteIds: testSuiteIds,
+                triggerType: type,
+                conditions: {}
+            };
+
+            if (type === 'push') {
+                triggerConfig.conditions = {
+                    cloudProvider: document.getElementById('triggerProvider').value,
+                    branches: document.getElementById('triggerBranches').value.split(',').map(b => b.trim())
+                };
+            }
+
+            resultDiv.innerHTML = '<div class="alert alert-info">⏳ Creating trigger...</div>';
+
+            try {
+                const response = await fetch('/api/triggers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(triggerConfig)
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            ✅ Trigger created successfully!<br>
+                            <strong>Trigger ID:</strong> <code>${data.trigger.id}</code>
+                        </div>
+                    `;
+                    document.getElementById('triggerName').value = '';
+                    document.getElementById('triggerTestSuites').value = '';
+                    loadTriggers();
+                } else {
+                    resultDiv.innerHTML = `<div class="alert alert-error">❌ ${data.error || 'Creation failed'}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="alert alert-error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        // Execute Trigger Manually
+        async function executeTrigger(triggerId) {
+            if (!confirm('Execute this trigger now?')) return;
+
+            try {
+                const response = await fetch(`/api/triggers/${triggerId}/execute`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Trigger executed successfully!');
+                    loadTriggers();
+                } else {
+                    alert(`❌ Execution failed: ${data.error}`);
+                }
+            } catch (error) {
+                alert(`❌ Error: ${error.message}`);
+            }
+        }
+
+        // Delete Trigger
+        async function deleteTrigger(triggerId) {
+            if (!confirm('Delete this trigger?')) return;
+
+            try {
+                const response = await fetch(`/api/triggers/${triggerId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Trigger deleted');
+                    loadTriggers();
+                } else {
+                    alert(`❌ Deletion failed: ${data.error}`);
+                }
+            } catch (error) {
+                alert(`❌ Error: ${error.message}`);
+            }
+        }
+
+        // Update Trigger Form (for future enhancements)
+        function updateTriggerForm() {
+            // Placeholder for dynamic form updates based on trigger type
+        }
+
+        // Delete Integration
+        async function deleteIntegration(provider) {
+            if (!confirm(`Delete ${provider} integration?`)) return;
+
+            try {
+                const response = await fetch(`/api/integrations/${provider}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Integration deleted');
+                    loadIntegrations();
+                } else {
+                    alert(`❌ Deletion failed: ${data.error}`);
+                }
+            } catch (error) {
+                alert(`❌ Error: ${error.message}`);
+            }
+        }
+
+        // ============ END NEW FEATURES ============
+
         // Initialize on load
         document.addEventListener('DOMContentLoaded', () => {
             refreshDashboard();
@@ -2618,6 +3139,19 @@
             if (testSuitesNav) {
                 testSuitesNav.addEventListener('click', loadSuites);
             }
+
+            // Load integrations when Cloud Integrations tab is clicked  
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    const section = item.getAttribute('onclick')?.match(/showSection\('([^']+)'\)/)?.[1];
+                    if (section === 'integrations') {
+                        loadIntegrations();
+                    } else if (section === 'triggers') {
+                        loadTriggers();
+                    }
+                });
+            });
         });
     </script>
 
