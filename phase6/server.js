@@ -52,7 +52,7 @@ const upload = multer({
 });
 
 const app = express();
-const PORT = 3007;
+const PORT = 6969;
 
 // Middleware
 app.use(cors());
@@ -1087,7 +1087,7 @@ app.listen(PORT, () => {
   console.log('║   Phase 4.5 (:3005)  RAG Service                              ║');
   console.log('║   Phase 5   (:3006)  Self-Improving Code                      ║');
   console.log('║                                                                ║');
-  console.log('║  Dashboard: http://localhost:3007                             ║');
+  console.log(`║  Dashboard: http://localhost:${PORT}                             ║`);
   console.log('║                                                                ║');
   console.log('║  🎉 AIQA Platform is now complete! 🎉                          ║');
   console.log('║                                                                ║');

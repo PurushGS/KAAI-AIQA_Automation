@@ -233,7 +233,7 @@ export class CloudIntegrationsManager {
    * Generate webhook URL for provider
    */
   generateWebhookUrl(provider) {
-    const baseUrl = process.env.WEBHOOK_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.WEBHOOK_BASE_URL || 'http://localhost:6969';
     return `${baseUrl}/api/webhooks/${provider}`;
   }
 
