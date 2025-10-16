@@ -25,6 +25,7 @@ An AI-driven test automation platform that converts natural language test cases 
 
 - Node.js 18+ installed
 - Chrome/Chromium browser
+- **OpenAI API Key** (BYOK - Bring Your Own Key)
 
 ### Installation
 
@@ -35,10 +36,15 @@ npm install
 # Install Playwright browsers
 npx playwright install chromium
 
-# Configure environment
-cp .env.example .env
+# Configure environment (IMPORTANT!)
+cp env.example .env
 # Edit .env and add your OPENAI_API_KEY
+# Get your key from: https://platform.openai.com/api-keys
 ```
+
+> **🔐 Security Note**: This project follows BYOK (Bring Your Own Key) model. 
+> Your API keys are stored locally in `.env` file and are NOT committed to Git.
+> Never share your `.env` file or commit it to version control.
 
 ### Running AIQA
 
