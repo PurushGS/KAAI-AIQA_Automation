@@ -280,11 +280,51 @@ app.use('/artifacts', async (req, res) => {
 // Load Phase 6's routes and middleware
 // Phase 6 will check UNIFIED_MODE and won't start its own server
 import('./phase6/server.js').then(async (phase6Module) => {
-  // Phase 6 exports the app
-  const phase6App = phase6Module.default || phase6Module;
+  // Phase 6 exports the app as default
+  // Since Phase 6's server.js creates its own app instance,
+  // we need to import it differently - actually, Phase 6's app
+  // is already created in that module, so we can't easily mount it.
+  // Instead, we'll serve Phase 6's static files and proxy its routes.
   
-  // Mount Phase 6's app (it has all routes and middleware)
-  app.use('/', phase6App);
+  // Serve Phase 6's static files FIRST (before proxy)
+  // This ensures static files (HTML, CSS, JS, images) are served directly
+  app.use(express.static(join(__dirname, 'phase6', 'public'), {
+    maxAge: 0, // No cache for development
+    etag: false
+  }));
+  
+  // Start Phase 6 on an internal port
+  const phase6Port = 6968;
+  await startPhase('phase6', 'phase6', phase6Port);
+  
+  // Proxy API routes to Phase 6 (but NOT static files - they're served above)
+  app.use(async (req, res, next) => {
+    // Skip if already handled (static files, phase proxies, artifacts, config, health)
+    if (req.path.startsWith('/api/phase') || 
+        req.path.startsWith('/artifacts') ||
+        req.path.startsWith('/api/config') ||
+        req.path.startsWith('/images/') ||
+        req.path.startsWith('/css/') ||
+        req.path.startsWith('/js/') ||
+        req.path === '/health' ||
+        req.path === '/') {
+      // If it's a static file or root, it's already handled by express.static above
+      // If it's root, proxy to Phase 6 for API routes
+      if (req.path === '/' && req.method !== 'GET') {
+        // API requests to root, proxy to Phase 6
+        return await proxyRequest(req, res, `http://localhost:${phase6Port}`);
+      }
+      return next();
+    }
+    
+    // Proxy API routes to Phase 6
+    if (req.path.startsWith('/api/')) {
+      return await proxyRequest(req, res, `http://localhost:${phase6Port}`);
+    }
+    
+    // For everything else, proxy to Phase 6
+    await proxyRequest(req, res, `http://localhost:${phase6Port}`);
+  });
   
   // Start unified server
   app.listen(PORT, async () => {
