@@ -1051,7 +1051,9 @@ app.get('/health', (req, res) => {
 
 // ==================== SERVER STARTUP ====================
 
-app.listen(PORT, () => {
+// Check if running in unified mode (don't start server if UNIFIED_MODE is set)
+if (!process.env.UNIFIED_MODE) {
+  app.listen(PORT, () => {
   console.log('╔════════════════════════════════════════════════════════════════╗');
   console.log('║              AIQA PHASE 6 - UNIFIED PLATFORM                   ║');
   console.log('╠════════════════════════════════════════════════════════════════╣');
@@ -1093,11 +1095,14 @@ app.listen(PORT, () => {
   console.log('║                                                                ║');
   console.log('╚════════════════════════════════════════════════════════════════╝');
   console.log('  ');
-});
+  });
+}
 
 // Handle graceful shutdown
-process.on('SIGINT', () => {
-  console.log('\n\n🛑 Shutting down Unified Platform gracefully...');
-  process.exit(0);
-});
+if (!process.env.UNIFIED_MODE) {
+  process.on('SIGINT', () => {
+    console.log('\n\n🛑 Shutting down Unified Platform gracefully...');
+    process.exit(0);
+  });
+}
 
