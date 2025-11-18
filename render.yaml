@@ -1,0 +1,123 @@
+services:
+  # Phase 6 - Unified Dashboard (Main Service) - CRITICAL
+  - type: web
+    name: kaai-phase6-dashboard
+    env: node
+    plan: starter
+    rootDir: phase6
+    buildCommand: npm install && npx playwright install chromium --with-deps
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PHASE1_URL
+        sync: false
+      - key: PHASE2_URL
+        sync: false
+      - key: PHASE3_URL
+        sync: false
+      - key: PHASE4_URL
+        sync: false
+      - key: RAG_URL
+        sync: false
+      - key: PHASE5_URL
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+    healthCheckPath: /health
+
+  # Phase 1 - NL to Steps Converter - HIGH PRIORITY
+  - type: web
+    name: kaai-phase1-converter
+    env: node
+    plan: starter
+    rootDir: phase1
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: PHASE1_MODEL
+        value: claude-3-5-haiku-20241022
+    healthCheckPath: /health
+
+  # Phase 2 - Test Execution Engine - HIGH PRIORITY
+  - type: web
+    name: kaai-phase2-executor
+    env: node
+    plan: starter
+    rootDir: phase2
+    buildCommand: npm install && npx playwright install chromium --with-deps
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: RAG_URL
+        sync: false
+    healthCheckPath: /health
+
+  # Phase 4.5 - RAG Knowledge Base - MEDIUM PRIORITY
+  - type: web
+    name: kaai-phase4-5-rag
+    env: node
+    plan: starter
+    rootDir: phase4.5
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CHROMA_HOST
+        value: localhost
+      - key: CHROMA_PORT
+        value: 8000
+    healthCheckPath: /health
+
+  # Phase 3 - AI Web Reader - OPTIONAL
+  - type: web
+    name: kaai-phase3-reader
+    env: node
+    plan: starter
+    rootDir: phase3
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /health
+
+  # Phase 4 - Learning System - OPTIONAL
+  - type: web
+    name: kaai-phase4-learning
+    env: node
+    plan: starter
+    rootDir: phase4
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /health
+
+  # Phase 5 - Self-Improving Code - OPTIONAL
+  - type: web
+    name: kaai-phase5-improving
+    env: node
+    plan: starter
+    rootDir: phase5
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /health
